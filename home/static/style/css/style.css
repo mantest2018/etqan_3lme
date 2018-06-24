@@ -1,0 +1,218 @@
+/*
+ * Droid Arabic Kufi (Arabic) http://www.google.com/webfonts/earlyaccess
+ */
+@font-face {
+    font-family: 'Droid Arabic Kufi';
+    font-style: normal;
+    font-weight: 400;
+    src: url(/static/style/fonts/DroidKufi-Regular.eot?#iefix) format('embedded-opentype'),
+    url(/static/style/fonts/DroidKufi-Regular.woff) format('woff'),
+    url(/static/style/fonts/DroidKufi-Regular.ttf) format('truetype');
+}
+@font-face {
+    font-family: 'Droid Arabic Kufi';
+    font-style: normal;
+    font-weight: 700;
+    src: url(/static/style/fonts/DroidKufi-Bold.eot?#iefix) format('embedded-opentype'),
+    url(/static/style/fonts/DroidKufi-Bold.woff) format('woff'),
+    url(/static/style/fonts/DroidKufi-Bold.ttf) format('truetype');
+}
+body {
+    font-family: 'Droid Arabic Kufi';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 12px;
+}
+
+
+
+li a {
+    color: green;
+}
+
+
+body{
+    text-align: right;
+    background-image: url("/static/style/imges/background.svg");
+    background-color: #fbfbf6;
+}
+
+.title_table{
+    padding: 13px;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.table {
+    border: 1px solid #dee2e6;
+    text-align: center;
+    margin: auto;
+    max-width: 612px;
+}
+
+.table th, .table td {
+    border: 1px solid #dee2e6;
+}
+
+.content {
+    padding: 10px;
+    margin: 10px;
+    min-width:fit-content;
+    background: #fbfbf6;
+    border: 1px solid #dadada;
+}
+
+.content .title {
+    background: #fbfbf6;
+    border-bottom: 1px solid #e4e7ed!important;
+    padding-bottom: 19px;
+    font-size: 24px;
+}
+
+.report {
+    min-width :200px;
+    min-height :100px;
+}
+
+
+.content .title {
+    border-bottom: 1px solid #e4e7ed!important;
+    padding-bottom: 19px;
+}
+
+
+form[role=login] > .erorr{
+    text-align: start;
+    color: #d50000;
+}
+
+
+.empty-cell {
+background: #eee;
+}
+
+/*   input_page    */
+
+
+form[role=input]   tr {
+    border-bottom: solid 1px #ababab;
+}
+
+
+form[role=input] {
+   font-size: 15px;
+}
+
+form[role=input]   th {
+    text-align: center;
+    padding: 10px;
+}
+
+form[role=input]  .lable {
+    text-align: start;
+}
+
+form[role=input] input {
+    min-height: 30px;
+    width: 100%;
+    max-width: 70px;
+    text-align: center;
+    padding: 0px;
+}
+
+/*  nave    */
+.bg-light {
+    background-color: #f8f9fa!important;
+    border-bottom: 1px solid #cacaca;
+    box-shadow: 0 0 7px 0px #adad9a;
+}
+
+
+.logo_home{
+    width: 300px;
+    margin: auto;
+    display: block;
+    padding: 10px;
+}
+
+/*     loging style */
+
+@CHARSET "UTF-8";
+/*
+over-ride "Weak" message, show font in dark grey
+*/
+
+.progress-bar {
+    color: #333;
+}
+
+/*
+Reference:
+http://www.bootstrapzen.com/item/135/simple-login-form-logo/
+*/
+
+* {
+    -webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+	outline: none;
+}
+
+    .form-control {
+	  position: relative;
+	  font-size: 16px;
+	  height: auto;
+	  padding: 10px;
+		@include box-sizing(border-box);
+
+		&:focus {
+		  z-index: 2;
+		}
+	}
+
+
+.login-form {
+	margin-top: 60px;
+}
+
+form[role=login] {
+	color: #5d5d5d;
+	background: #f2f2f2;
+	padding: 26px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+	form[role=login] img {
+		display: block;
+		margin: 0 auto;
+		margin-bottom: 35px;
+	}
+	form[role=login] input,
+	form[role=login] button {
+		font-size: 18px;
+		margin: 16px 0;
+	}
+	form[role=login] > div {
+		text-align: center;
+	}
+
+.form-links {
+	text-align: center;
+	margin-top: 1em;
+	margin-bottom: 50px;
+}
+	.form-links a {
+		color: #fff;
+	}
+
+/*    end loging style */
+
+
+.footer {
+    position: absolute;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    background-color: #f5f5f5;
+}
