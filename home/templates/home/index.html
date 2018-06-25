@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+
+<div class="table-responsive">
+
+
+
+    <h1 class="title">
+    <tr>
+        <th scope="col">التقرير حتى يوم:</th>
+        <th scope="col">{{last_day}}</th>
+  </tr>
+        <br/>
+         <th scope="col">الأوجه المحفوظة:</th>
+        <th scope="col">{{number_pages}}</th>
+         <br/>
+         <th scope="col">أوجه الربط:</th>
+        <th scope="col">{{link}}</th>
+</h1>
+ <a class="btn btn-outline-success my-2 my-sm-0" href="/login/">صفحة تسجيل الدخول</a>
+</div>
+
+<div id="demo">
+<h1>تحميل التقرير</h1>
+</div>
+
+<script>
+
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      document.getElementById("demo").innerHTML =
+      this.responseText;
+    }
+  };
+  xhttp.open("POST", "report_view/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}");
+}
+
+$(document).ready(function() {
+loadDoc() ;
+});
+</script>
+
+{% endblock %}
