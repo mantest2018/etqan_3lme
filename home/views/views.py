@@ -1,18 +1,28 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.utils import timezone
+import datetime
+from ..models import Students, Days
+from django.db.models import Q
+
 # Create your views here.
-from ..models import Students
+
+
+def day_now():
+    # # print() datetime.datetime(2018, 5,  30, 6, 0, 2, 423063) datetime.datetime.now()
+    t = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+    return Days.objects.filter(Q(start_time__lte=t) | Q(id=1)).latest('id').id
 
 
 def index(request):
     if is_login(request):
         if request.session['user_type'] == 'student':
-            return render(request, 'home/index.html')
+            from .student import tasks_every_day
+            return  tasks_every_day(request, day_now(), request.session['member_id'])
+        if request.session['user_type'] == 'techer':
+           return  print('**********************************')
+            # return students(request, day_now())
 
-    #         # return tasks_every_day(request, day_now(), request.session['member_id'])
-    #     if request.session['user_type'] == 'techer':
-    #         return students(request, day_now())
-    #
     # last_day = Reports_all_days.objects.filter(id_demo=True, id__lt=day_now()).latest('id')
     # tasks = Tasks_every_day.objects.filter(reports_all_days__id__lte=last_day.id)
     # context = dict(
@@ -53,3 +63,11 @@ def login(request):
 def is_login(request):
     return request.session.test_cookie_worked() and "member_id" in request.session
 
+def logout(request):
+    if request.session.test_cookie_worked():
+        request.session.delete_test_cookie()
+    if "member_id" in request.session:
+        del request.session['member_id']
+    if "user_type" in request.session:
+        del request.session['user_type']
+    return HttpResponseRedirect('/')
