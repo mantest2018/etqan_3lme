@@ -81,7 +81,7 @@ class Students(models.Model):
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.student) + '  ' +str( self.tracks)
+        return  str(self.student)
 
 
 class Tasks_Every_Day(models.Model):

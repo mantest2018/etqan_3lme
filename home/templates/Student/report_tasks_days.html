@@ -1,9 +1,14 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h1 class="title">الطالب:  {{ student  }} </h1>
-
-
+<h1 class="title">
+    <tr>
+        <th scope="col">العضو:</th>
+        <th scope="col">{{ student }}</th>
+        <th scope="col">مسار:</th>
+        <th scope="col">{{ student.tracks }}</th>
+    </tr>
+</h1>
 {% if latest_list %}
 <table class="table">
   <thead>
@@ -23,9 +28,11 @@
         <tbody>
         <td> {{ forloop.counter }}</td>
         <td> {{ list.day.name }}</a></td>
-        <td> {{ list.task1  }}</td>
-         <td> {{ list.task2    }}</td>
-        <td> {{ list.task3 }}</td>
+        <td>
+<div class= {% if list.task1 %} "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
+        </td>
+         <td> <div class= {% if list.task2 %} "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
+        <td> <div class= {% if list.task3 %} "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
         <td> <a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>
 
   </tbody>

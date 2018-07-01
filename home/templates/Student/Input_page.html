@@ -3,10 +3,12 @@
 {% block content %}
 <h1 class="title">
     <tr>
-        <th scope="col">الطالب:</th>
+        <th scope="col">العضو:</th>
         <th scope="col">{{ report.student }}</th>
-        <th scope="col">المسار:</th>
+        <th scope="col">مسار:</th>
         <th scope="col">{{ report.student.tracks }}</th>
+        <br/>
+           <th scope="col">اليوم:</th>
         <th scope="col">{{ report.plan.day }}</th>
         {% if  report.student.is_show %}
          {% else %}
@@ -26,7 +28,7 @@
                 <tr>
                     <th class="lable">{{ field.label_tag }}</th>
                     <th>{{ field.help_text }}</th>
-                    <th>{{ field }}</th>
+                    <th>{{ field }} </th>
                 </tr>
             {% endif %}
         {% endfor %}

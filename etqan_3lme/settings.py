@@ -25,8 +25,8 @@ SECRET_KEY = 'vh6=mdb3=wb6zhv1kwh3ce@5b_*++^1@c@ch+=+dz4*m9@*ri0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# ALLOWED_HOSTS = [u'mantest2018.pythonanywhere.com']
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
