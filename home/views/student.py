@@ -113,3 +113,29 @@ def report_tasks_weeks(request, student_id=''):
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'Student/report_tasks_weeks.html', context)
+
+
+def tasks_every_month_objects():
+    month =Tasks_Every_Day.objects.filter(day__id__lte=day_now())[0].day.weeks.months.id
+    return Tasks_Every_Months.objects.filter(months__id__lte=month)
+
+def report_tasks_months(request, student_id=''):
+    try:
+        if not is_login(request):
+            return HttpResponseRedirect('/')
+        if student_id == '':
+            if request.session['user_type'] == 'techer':
+                return HttpResponseRedirect('/')
+            student_id = request.session['member_id']
+        latest_list = ''
+        if request.session['user_type'] == 'student':
+            latest_list = tasks_every_month_objects().filter(student=request.session['member_id']).order_by('months')
+        if request.session['user_type'] == 'techer':
+            latest_list = tasks_every_month_objects().filter(student=student_id,
+                                                 student__tracks=request.session['member_id']).order_by(
+                'months')
+        student = Students.objects.get(pk=student_id)
+        context = {'latest_list': latest_list, 'student': student}
+    except(Students.DoesNotExist):
+        raise Http404("Students does not exist")
+    return render(request, 'Student/report_tasks_months.html', context)

@@ -73,7 +73,7 @@ class Plan(models.Model):
 class Students(models.Model):
     tracks = models.ForeignKey(Tracks, on_delete=models.DO_NOTHING)
     student = models.CharField(max_length=200)
-    phone_nemper = models.CharField(max_length=10)
+    phone_number = models.CharField(max_length=10, null=True, blank=True)
     choice_text = models.CharField(max_length=200, null=True, blank=True)
     number_user = models.IntegerField(default=0)
     password = models.CharField(max_length=8)
@@ -83,6 +83,29 @@ class Students(models.Model):
     def __str__(self):
         return  str(self.student)
 
+
+
+    def save(self, *args, **kwargs):
+        for item in Days.objects.all():
+            updateData(self, item)
+        super(Students, self).save(*args, **kwargs)
+
+def updateData(Student, day):
+    try:
+        Tasks_Every_Day.objects.get(student=Student, day=day)
+    except Tasks_Every_Day.DoesNotExist:
+        report = Tasks_Every_Day(student=Student, day=day)
+        report.save()
+    try:
+        Tasks_Every_Weeks.objects.get(student=Student, weeks=day.weeks)
+    except Tasks_Every_Weeks.DoesNotExist:
+        report = Tasks_Every_Weeks(student=Student, weeks=day.weeks)
+        report.save()
+    try:
+        Tasks_Every_Months.objects.get(student=Student, months=day.weeks.months)
+    except Tasks_Every_Months.DoesNotExist:
+        report = Tasks_Every_Months(student=Student, months=day.weeks.months)
+        report.save()
 
 class Tasks_Every_Day(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
@@ -113,11 +136,11 @@ class Tasks_Every_Weeks(models.Model):
         return str(self.student) + '  ' + str(self.weeks)
 
     def total_all(self):
-        return Tasks_Every_Day.objects.filter(day__weeks__id__lte=self.weeks.id).aggregate(count=Count('id'))[
+        return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks).aggregate(count=Count('id'))[
                    'count'] * 3
 
     def total(self):
-        return Tasks_Every_Day.objects.filter(day__weeks__id__lte=self.weeks.id).aggregate(sum=Sum('degree'))['sum']
+        return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks).aggregate(sum=Sum('degree'))['sum']
 
 
 class Tasks_Every_Months(models.Model):
@@ -127,3 +150,24 @@ class Tasks_Every_Months(models.Model):
 
     def __str__(self):
         return str(self.student )+ '  ' + str(self.months)
+
+    def total_all(self):
+        return Tasks_Every_Day.objects.filter(student=self.student,day__weeks__months=self.months).aggregate(count=Count('id'))[
+                   'count'] * 3
+
+    def total(self):
+        return Tasks_Every_Day.objects.filter(student=self.student,day__weeks__months=self.months).aggregate(sum=Sum('degree'))['sum']
+
+    def count_present_all(self):
+        return Tasks_Every_Weeks.objects.filter(student=self.student,weeks__months=self.months).aggregate(count=Count('id'))[
+                   'count']
+
+    def count_present(self):
+        return Tasks_Every_Weeks.objects.filter(student=self.student,weeks__months=self.months,present='True').aggregate(count=Count('id'))[
+                   'count']
+
+    def degree(self):
+        if self.total_all() ==0 or self.count_present_all()==0:
+            return 'يوجد نقص في الإدخال'
+        degree= 50 * (self.total()/self.total_all())+20*(self.count_present()/self.count_present_all())+(self.test/100)*30
+        return "%.2f%%" %  degree

@@ -1,0 +1,49 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">
+    <tr>
+        <th scope="col">العضو:</th>
+        <th scope="col">{{ student }}</th>
+        <th scope="col">مسار:</th>
+        <th scope="col">{{ student.tracks }}</th>
+    </tr>
+</h1>
+
+{% if latest_list %}
+<table class="table">
+    <thead>
+    <tr>
+
+        <th>#</th>
+        <th scope="col">الشهر</th>
+        <th scope="col"> المهام الطلوبة</th>
+        <th scope="col">المنفذ</th>
+        <th scope="col">الحضور</th>
+        <th scope="col">الإختبار</th>
+        <th scope="col">الدرجة</th>
+        {% if 'techer' in request.session.user_type%}
+        <th scope="col">تحرير</th>
+        {% endif %}
+
+    </tr>
+    </thead>
+    {% for list in latest_list %}
+    <tbody>
+    <td> {{ forloop.counter }}</td>
+    <td> {{ list.weeks }}</td>
+    <td> {{ list.total_all }}</td>
+    <td> {{ list.total }}</td>
+     <td> {{ list.count_present }}</td>
+     <td> {{ list.test }}</td>
+     <td> {{ list.degree  }}</td>
+    {% if 'techer' in request.session.user_type%}
+    <td><a href="/student/{{ list.reports_all_days.id }}/tasks/{{ list.student.id }}">تحرير</a></td>
+    {% endif %}
+    </tbody>
+    {% endfor %}
+</table>
+{% else %}
+<p>لا يوجد بيانات </p>
+{% endif %}
+{% endblock %}

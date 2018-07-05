@@ -71,3 +71,8 @@ def logout(request):
     if "user_type" in request.session:
         del request.session['user_type']
     return HttpResponseRedirect('/')
+
+def update(request):
+    for item in Students.objects.all():
+        item.save()
+    return HttpResponse("تم")
