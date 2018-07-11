@@ -10,7 +10,6 @@ from django.db.models import Sum , Count
 class Tracks(models.Model):
     name = models.CharField(max_length=200)
     notes = models.CharField(max_length=250, null=True, blank=True)
-
     def __str__(self):
         return str(self.name)
 
@@ -54,10 +53,13 @@ class Days(models.Model):
     start_time = models.DateTimeField(default=datetime.datetime.now(), null=True, blank=True)
     end_time = models.DateTimeField(default=datetime.datetime.now(), null=True, blank=True)
 
-    # id_demo = models.BooleanField(default=False, blank=True)
-
     def __str__(self):
-        return str(self.name) + '  ' + str(self.weeks )
+        return str(self.name) + '  ' + str(self.weeks.months )
+
+    def date_hijri(self):
+        from library.umalqurra.hijri_date import HijriDate
+        um = HijriDate(self.start_time)
+        return  um.date_hijri()
 
 
 class Plan(models.Model):
@@ -86,9 +88,10 @@ class Students(models.Model):
 
 
     def save(self, *args, **kwargs):
+        super(Students, self).save(*args, **kwargs)
         for item in Days.objects.all():
             updateData(self, item)
-        super(Students, self).save(*args, **kwargs)
+
 
 def updateData(Student, day):
     try:
@@ -135,6 +138,11 @@ class Tasks_Every_Weeks(models.Model):
     def __str__(self):
         return str(self.student) + '  ' + str(self.weeks)
 
+    def chpresent(self):
+        if self.present:
+            return 'checkboxtrue'
+        else:
+            return 'checkboxfalse'
     def total_all(self):
         return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks).aggregate(count=Count('id'))[
                    'count'] * 3

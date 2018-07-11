@@ -11,34 +11,41 @@
 </h1>
 {% if latest_list %}
 <table class="table">
-  <thead>
+    <thead>
     <tr>
 
         <th>#</th>
-      <th scope="col">اليوم</th>
+        <th scope="col">التاريخ</th>
+        <th scope="col">اليوم</th>
         <th scope="col"> المهمة 1</th>
-         <th scope="col"> المهمة 2</th>
-         <th scope="col">المهمة 3</th>
-        <th scope="col">التحرير </th>
+        <th scope="col"> المهمة 2</th>
+        <th scope="col">المهمة 3</th>
+        <th scope="col">التحرير</th>
 
 
     </tr>
-  </thead>
-        {% for list in latest_list %}
-        <tbody>
-        <td> {{ forloop.counter }}</td>
-        <td> {{ list.day.name }}</a></td>
-        <td>
-<div class= {% if list.task1 %} "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
-        </td>
-         <td> <div class= {% if list.task2 %} "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
-        <td> <div class= {% if list.task3 %} "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
-        <td> <a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>
+    </thead>
+    {% for list in latest_list %}
+    <tbody>
+    <td> {{ forloop.counter }}</td>
+    <td> {{ list.day.date_hijri }}</td>
+    <td> {{ list.day.name }}</td>
+    <td>
+        <div class={% if list.task1 %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
+    </td>
+    <td>
+        <div class={% if list.task2 %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
+    <td>
+        <div class={% if list.task3 %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
+    <td><a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>
 
-  </tbody>
-        {% endfor %}
+    </tbody>
+    {% endfor %}
 </table>
-    {% else %}
-        <p>لا يوجد بيانات </p>
-    {% endif %}
+{% else %}
+<p>لا يوجد بيانات </p>
+{% endif %}
 {% endblock %}

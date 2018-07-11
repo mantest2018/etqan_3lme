@@ -15,15 +15,21 @@ class Tasks_Every_Day_Form(forms.ModelForm):
     task1 = forms.BooleanField(label='المهمة الأولى', required=False)
     task2 = forms.BooleanField(label='المهمة الثانية', required=False)
     task3 = forms.BooleanField(label='المهمة الثالثة', required=False)
+    amount=False
 
     class Meta:
         model = Tasks_Every_Day
         fields = ['task1', 'task2', 'task3']
 
+    def getAmount(self):
+        return self.amount
+
     def __init__(self, *args, **kwargs):
         super(Tasks_Every_Day_Form, self).__init__(*args, **kwargs)
         plan=Plan.objects.filter(day__id= self.instance.day.id, tracks__id=self.instance.student.tracks.id)
+
         if plan.aggregate(count=Count('id'))['count']==1:
+            self.amount = plan.amount
             plan = plan[0]
             for item in ['task1', 'task2', 'task3']:
                 self.fields[item].help_text = plan.intent.__dict__[item]

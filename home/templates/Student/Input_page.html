@@ -8,29 +8,40 @@
         <th scope="col">مسار:</th>
         <th scope="col">{{ report.student.tracks }}</th>
         <br/>
-           <th scope="col">اليوم:</th>
-        <th scope="col">{{ report.plan.day }}</th>
-        {% if  report.student.is_show %}
-         {% else %}
-            <th scope="col">نأسف تم حذف اسمك من الموقع تواصل مع المشرف :</th>
-         {% endif %}
+        <th scope="col">اليوم:</th>
+        <th scope="col">{{ report.day.name }}</th>
+          <th scope="col">التاريخ:</th>
+        <th scope="col">{{ report.day.date_hijri }}</th>
+        {% if report.student.is_show == False %}
+        <th scope="col">نأسف تم حذف اسمك من الموقع تواصل مع المشرف :</th>
+        {% endif %}
     </tr>
 </h1>
 <form action="" method="post" role="input">{% csrf_token %}
+    {% if fotmedit.getAmount %}
+    <th scope="col">المقدار:</th>
+    <th scope="col">{{ fotmedit.getAmount }}</th>
+    {% endif %}
+
     <table>
         <tr>
             <th> المطلوب</th>
+            {% if fotmedit.getAmount %}
             <th>الخطة</th>
+            {% endif %}
+
             <th>التنفيذ</th>
         </tr>
         {% for field in fotmedit %}
-            {% if not field.name in hide %}
-                <tr>
-                    <th class="lable">{{ field.label_tag }}</th>
-                    <th>{{ field.help_text }}</th>
-                    <th>{{ field }} </th>
-                </tr>
+        {% if not field.name in hide %}
+        <tr>
+            <th class="lable">{{ field.label_tag }}</th>
+            {% if fotmedit.getAmount %}
+            <th>{{ field.help_text }}</th>
             {% endif %}
+            <th>{{ field }}</th>
+        </tr>
+        {% endif %}
         {% endfor %}
     </table>
 

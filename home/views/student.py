@@ -1,7 +1,7 @@
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 
-from ..models import Students, Tasks_Every_Day, Plan, Days,Tasks_Every_Weeks,Tasks_Every_Months
+from ..models import Students, Tasks_Every_Day, Plan, Days, Tasks_Every_Weeks, Tasks_Every_Months
 from .views import day_now, is_login
 from ..form import Tasks_Every_Day_Form
 
@@ -47,7 +47,7 @@ def tasks_every_day(request, day_id='', student_id=''):
                 return HttpResponseRedirect('/')
         report = Tasks_Every_Day.objects.get(student=student_id, day__id=day_id)
         fotmedit = Tasks_Every_Day_Form(request.POST or None, instance=report)
-        is_save=''
+        is_save = ''
         if "POST" == request.method:
             fotmedit.save()
             is_save = 'تم حفظ البيانات'
@@ -59,13 +59,19 @@ def tasks_every_day(request, day_id='', student_id=''):
         Student = Students.objects.get(pk=student_id)
         day = Days.objects.get(pk=day_id)
         updateData(Student, day)
-        report=Tasks_Every_Day.objects.get(student=student_id, day__id=day_id)
+        report = Tasks_Every_Day.objects.get(student=student_id, day__id=day_id)
         fotmedit = Tasks_Every_Day_Form(instance=report)
         context = {'fotmedit': fotmedit, 'report': report}
     return render(request, 'Student/Input_page.html', context)
 
-def tasks_every_day_objects():
-    return Tasks_Every_Day.objects.filter(day__id__lte=day_now())
+
+def tasks_every_day_objects(showAllDay=False):
+    if showAllDay == False:
+        week = Days.objects.filter(id__lte=day_now()).latest('id').weeks
+        return Tasks_Every_Day.objects.filter(day__id__lte=day_now(), day__weeks=week)
+    else:
+        return Tasks_Every_Day.objects.filter(day__id__lte=day_now())
+
 
 def report_tasks_days(request, student_id=''):
     try:
@@ -75,14 +81,22 @@ def report_tasks_days(request, student_id=''):
             if request.session['user_type'] == 'techer':
                 return HttpResponseRedirect('/')
             student_id = request.session['member_id']
+        else:
+            if request.session['user_type'] == 'student':
+                if request.session['member_id'] != student_id:
+                    return HttpResponseRedirect('/')
+            if request.session['user_type'] == 'techer':
+                if request.session['member_id'] != Students.objects.get(pk=student_id).tracks.id:
+                    return HttpResponseRedirect('/')
         latest_list = ''
+        student = Students.objects.get(pk=student_id)
         if request.session['user_type'] == 'student':
             latest_list = tasks_every_day_objects().filter(student=request.session['member_id']).order_by('day')
         if request.session['user_type'] == 'techer':
             latest_list = tasks_every_day_objects().filter(student=student_id,
-                                                 student__tracks=request.session['member_id']).order_by(
+                                                           student__tracks=request.session['member_id']).order_by(
                 'day')
-        student = Students.objects.get(pk=student_id)
+
         context = {'latest_list': latest_list, 'student': student}
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
@@ -90,8 +104,9 @@ def report_tasks_days(request, student_id=''):
 
 
 def tasks_every_week_objects():
-    week =Tasks_Every_Day.objects.filter(day__id__lte=day_now())[0].day.weeks
+    week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
     return Tasks_Every_Weeks.objects.filter(weeks__id__lte=week.id)
+
 
 def report_tasks_weeks(request, student_id=''):
     try:
@@ -106,7 +121,7 @@ def report_tasks_weeks(request, student_id=''):
             latest_list = tasks_every_week_objects().filter(student=request.session['member_id']).order_by('weeks')
         if request.session['user_type'] == 'techer':
             latest_list = tasks_every_week_objects().filter(student=student_id,
-                                                 student__tracks=request.session['member_id']).order_by(
+                                                            student__tracks=request.session['member_id']).order_by(
                 'weeks')
         student = Students.objects.get(pk=student_id)
         context = {'latest_list': latest_list, 'student': student}
@@ -116,8 +131,9 @@ def report_tasks_weeks(request, student_id=''):
 
 
 def tasks_every_month_objects():
-    month =Tasks_Every_Day.objects.filter(day__id__lte=day_now())[0].day.weeks.months.id
+    month = Tasks_Every_Day.objects.filter(day__id__lte=day_now())[0].day.weeks.months.id
     return Tasks_Every_Months.objects.filter(months__id__lte=month)
+
 
 def report_tasks_months(request, student_id=''):
     try:
@@ -132,7 +148,7 @@ def report_tasks_months(request, student_id=''):
             latest_list = tasks_every_month_objects().filter(student=request.session['member_id']).order_by('months')
         if request.session['user_type'] == 'techer':
             latest_list = tasks_every_month_objects().filter(student=student_id,
-                                                 student__tracks=request.session['member_id']).order_by(
+                                                             student__tracks=request.session['member_id']).order_by(
                 'months')
         student = Students.objects.get(pk=student_id)
         context = {'latest_list': latest_list, 'student': student}

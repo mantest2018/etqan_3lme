@@ -9,7 +9,6 @@ from django.db.models import Q
 
 
 def day_now():
-    # # print() datetime.datetime(2018, 5,  30, 6, 0, 2, 423063) datetime.datetime.now()
     t = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
     return Days.objects.filter(Q(start_time__lte=t) | Q(id=1)).latest('id').id
 

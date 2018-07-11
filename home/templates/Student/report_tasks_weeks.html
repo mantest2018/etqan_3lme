@@ -17,6 +17,7 @@
 
         <th>#</th>
         <th scope="col">الأسبوع</th>
+        <th scope="col">شهر</th>
         <th scope="col"> المهام الطلوبة</th>
         <th scope="col">المنفذ</th>
         <th scope="col">الحضور</th>
@@ -29,12 +30,12 @@
     {% for list in latest_list %}
     <tbody>
     <td> {{ forloop.counter }}</td>
-    <td> {{ list.weeks }}</td>
+    <td> {{ list.weeks.name }}</td>
+    <td> {{ list.weeks.months.name }}</td>
     <td> {{ list.total_all }}</td>
     <td> {{ list.total }}</td>
     <td>
-        <div class={% if list.present %}
-        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div> </td>
+        <div class= "{{ list.chpresent }}"></div> </td>
     {% if 'techer' in request.session.user_type%}
     <td><a href="/student/{{ list.reports_all_days.id }}/tasks/{{ list.student.id }}">تحرير</a></td>
     {% endif %}
