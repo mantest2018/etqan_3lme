@@ -24,9 +24,7 @@ def updateData(Student, day):
         report.save()
 
 
-def tasks_every_day(request, day_id='', student_id=''):
-    if day_id == '':
-        day_id = day_now()
+def tasks_every_day(request, day_id=day_now(), student_id=''):
 
     if student_id == '':
         if request.session['user_type'] == 'student':
@@ -37,12 +35,13 @@ def tasks_every_day(request, day_id='', student_id=''):
     if not is_login(request):
         return HttpResponseRedirect('/')
     try:
+        s = Students.objects.get(pk=student_id)
         if request.session['user_type'] == 'student':
             if student_id != request.session['member_id']:
-                return HttpResponseRedirect('/')
-
+                admin = Students.objects.get(pk=request.session['member_id'])
+                if not(admin.is_admin and admin.tracks==s.tracks):
+                    return HttpResponseRedirect('/')
         if request.session['user_type'] == 'techer':
-            s = Students.objects.get(pk=student_id)
             if s.course.id != request.session['member_id']:
                 return HttpResponseRedirect('/')
         report = Tasks_Every_Day.objects.get(student=student_id, day__id=day_id)
@@ -54,7 +53,7 @@ def tasks_every_day(request, day_id='', student_id=''):
         degree = "%.2f%%" % (100 * report.degree / 3)
         context = {'fotmedit': fotmedit, 'report': report, 'is_save': is_save, 'degree': degree}
     except(Plan.DoesNotExist, Students.DoesNotExist):
-        raise Http404("Courses does not exist")
+        raise Http404("الصفحة المطلوبة غير موجودة")
     except(Tasks_Every_Day.DoesNotExist):
         Student = Students.objects.get(pk=student_id)
         day = Days.objects.get(pk=day_id)
@@ -155,3 +154,27 @@ def report_tasks_months(request, student_id=''):
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'Student/report_tasks_months.html', context)
+
+
+#    admin
+def all_student(request):
+    try:
+        if not is_login(request):
+            return HttpResponseRedirect('/')
+        if request.session['user_type'] == 'techer':
+            return HttpResponseRedirect('/')
+        student_id = request.session['member_id']
+        student = Students.objects.get(pk=student_id)
+        if not student.is_admin:
+            return HttpResponseRedirect('/')
+        week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
+        latest_list= Tasks_Every_Weeks.objects.filter(weeks__id=week.id,student__tracks=student.tracks)
+        # latest_list = Students.objects.filter(tracks=student.tracks).order_by('student')
+        context = {
+            'latest_list': latest_list,
+            'student': student,
+            'week': week,
+        }
+    except(Students.DoesNotExist):
+        raise Http404("Students does not exist")
+    return render(request, 'Student/all_student.html', context)

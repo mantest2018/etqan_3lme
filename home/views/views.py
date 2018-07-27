@@ -40,6 +40,8 @@ def login(request):
                 m = Students.objects.get(number_user=request.POST['id_user'])
                 if m.password == request.POST.get("password", ""):
                     request.session['user_type'] = request.POST['user_type']
+                    if m.is_admin:
+                        request.session['admin']=None
                     request.session['member_id'] = m.id
                     request.session.set_test_cookie()
                     return HttpResponseRedirect('/')
@@ -69,6 +71,8 @@ def logout(request):
         del request.session['member_id']
     if "user_type" in request.session:
         del request.session['user_type']
+    if "admin" in request.session:
+        del request.session['admin']
     return HttpResponseRedirect('/')
 
 def update(request):
