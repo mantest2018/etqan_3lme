@@ -22,5 +22,12 @@ urlpatterns = [
 
     path('present/', student.present, name='present'),
 
+    #     csv   donlond and upload
+    path('upload_Plan/', views.upload_Plan, name='upload_Plan'),
+    path('donload_Plan/', views.donload_Plan, name='donload_Plan'),
+path('donload_intent/', views.donload_intent, name='donload_intent'),
+
+
+
 
 ]

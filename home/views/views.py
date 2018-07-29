@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 import datetime
-from ..models import Students, Days
+from ..models import Students, Days ,Plan ,Intent
 from django.db.models import Q
 
 # Create your views here.
@@ -64,6 +64,15 @@ def login(request):
 def is_login(request):
     return request.session.test_cookie_worked() and "member_id" in request.session
 
+def is_admin(request):
+    if not is_login(request):
+        return False
+    student_id = request.session['member_id']
+    student = Students.objects.get(pk=student_id)
+    if  student.is_admin:
+        return True
+    return False
+
 def logout(request):
     if request.session.test_cookie_worked():
         request.session.delete_test_cookie()
@@ -79,3 +88,95 @@ def update(request):
     for item in Students.objects.all():
         item.save()
     return HttpResponse("تم")
+
+def donload_Plan(request):
+    if not is_admin(request):
+        return HttpResponseRedirect('/')
+
+    import csv
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+    response['Content-Disposition'] = 'attachment; filename="Plan.csv"'
+
+    writer = csv.writer(response, delimiter=';')
+
+    writer.writerow(['id', 'اليوم','التاريخ', 'الهدف', 'المقدار'])
+
+    student_id = request.session['member_id']
+    student = Students.objects.get(pk=student_id)
+
+    for day_item in Days.objects.all():
+        item=Plan.objects.filter(tracks=student.tracks,day=day_item)
+        if item:
+            writer.writerow([day_item.id, day_item , day_item.date_hijri() ,item.intent, item.amount])
+        else:
+            writer.writerow([day_item.id, day_item, day_item.date_hijri(), '', ''])
+    return response
+
+def donload_intent(request):
+    if not is_admin(request):
+        return HttpResponseRedirect('/')
+
+    import csv
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+    response['Content-Disposition'] = 'attachment; filename="intent.csv"'
+
+    writer = csv.writer(response, delimiter=';')
+
+    writer.writerow(['id', 'الهدف','المهمة1', 'المهمة2', 'المهمة3'])
+
+    student_id = request.session['member_id']
+    student = Students.objects.get(pk=student_id)
+
+    for item in Intent.objects.all():
+        writer.writerow([item.id, item.name, item.task1,item.task2,item.task3])
+    return response
+
+
+
+
+def upload_Plan(request):
+    if not is_admin(request):
+        return HttpResponseRedirect('/')
+    data = {}
+    if "GET" == request.method:
+        return HttpResponseRedirect('/all_student')
+        # return render(request, "myapp/upload_csv1.html", data)
+    # if not GET, then proceed
+    # try:
+    csv_file = request.FILES["Plan"]
+    file_data = csv_file.read().decode("utf-8-sig")
+
+    lines = file_data.split("\n")
+    # loop over the lines and save them in db. If error , store as string and then display
+    student_id = request.session['member_id']
+    student = Students.objects.get(pk=student_id)
+    for line in lines:
+        fields = line.split(";")
+
+        # try:
+        if fields[0]=='id':
+            continue
+        id= str(fields[0])
+        id = int(id)
+        # except ValueError:
+        #     print(fields[0])
+        #     continue
+        day_item = Days.objects.filter(id=id)
+        if day_item:
+            item = Plan.objects.filter(tracks=student.tracks, day=day_item)
+            print(item)
+            if item:
+                item.intent=fields[3]
+                item.amount=fields[4]
+                item.save()
+            else:
+                plan=Plan(tracks=student.tracks,day=day_item,intent = fields[3],amount = fields[4])
+                plan.save()
+
+
+    # except:
+    #     print('erorr')
+
+    return HttpResponseRedirect('/all_student')

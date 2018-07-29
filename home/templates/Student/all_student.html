@@ -16,6 +16,15 @@
 </h1>
 
 {% if latest_list %}
+<button onclick="donload('/donload_intent/')" >تحميل الأهداف</button>
+<button onclick="donload('/donload_Plan/')" >تحميل الخطه</button>
+ <form action="/upload_Plan/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="Plan">
+    <input type="submit" value="رفع الخطه">
+</form>
+
+
 <table class="table">
     <thead>
     <tr>
@@ -37,6 +46,10 @@
         <div class= "{{ list.chpresent }}" name="{{ list.id }}" onclick="send_to(this)"></div> </td>
     </tbody>
     <script>
+    function donload(self) {
+   window.open(self);
+  }
+
 function send_to(self) {
 
 var xhttp = new XMLHttpRequest();
