@@ -1,4 +1,4 @@
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from ..models import Students, Tasks_Every_Day, Plan, Days, Tasks_Every_Weeks, Tasks_Every_Months
@@ -178,3 +178,24 @@ def all_student(request):
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'Student/all_student.html', context)
+
+def present(request):
+    if "POST" == request.method:
+        try:
+            if not is_login(request):
+                return HttpResponseRedirect('/')
+            if request.session['user_type'] == 'techer':
+                return HttpResponseRedirect('/')
+            student_id = request.session['member_id']
+            student = Students.objects.get(pk=student_id)
+            if not student.is_admin:
+                return HttpResponseRedirect('/')
+            id = request.POST.get('present_id' ,'')
+            item = Tasks_Every_Weeks.objects.get(id=id, student__tracks=student.tracks)
+            item.present= not item.present
+            item.save()
+            return HttpResponse(item.present)
+        except(Students.DoesNotExist , Tasks_Every_Weeks.DoesNotExist):
+            raise Http404("Students does not exist")
+    return HttpResponse("erorr")
+

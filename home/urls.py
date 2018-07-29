@@ -20,4 +20,7 @@ urlpatterns = [
     # student admin
     path('all_student/', student.all_student, name='all_student'),
 
+    path('present/', student.present, name='present'),
+
+
 ]

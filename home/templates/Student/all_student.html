@@ -34,8 +34,27 @@
     <td> {{ list.total_all }}</td>
     <td> {{ list.total }}</td>
     <td>
-        <div class= "{{ list.chpresent }}"></div> </td>
+        <div class= "{{ list.chpresent }}" name="{{ list.id }}" onclick="send_to(this)"></div> </td>
     </tbody>
+    <script>
+function send_to(self) {
+
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText=="True"){
+        self.className="checkboxtrue"
+        }else{
+        self.className="checkboxfalse"
+        }
+    }
+  };
+  xhttp.open("POST", "/present/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&present_id="+self.attributes["name"].value);
+
+}
+</script>
     {% endfor %}
 </table>
 {% else %}
