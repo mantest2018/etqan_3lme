@@ -145,34 +145,44 @@ def upload_Plan(request):
         # return render(request, "myapp/upload_csv1.html", data)
     # if not GET, then proceed
     # try:
-    csv_file = request.FILES["Plan"]
-    file_data = csv_file.read().decode("utf-8-sig")
-
-    lines = file_data.split("\n")
+    import csv
+    # file = request.FILES['Plan']
+    # decoded_file = file.read().splitlines()
+    # for item in decoded_file:
+    #     item=item.decode('utf-8-sig')
+    #
+    # csv_file = request.FILES["Plan"]
+    # file_data = csv_file.read().decode("utf-8")
+    # file=file_data.replace('\r','')
+    # file =   file1.replace('\ufeff1','')
+    lines = request.FILES['Plan'].read().splitlines()
     # loop over the lines and save them in db. If error , store as string and then display
     student_id = request.session['member_id']
     student = Students.objects.get(pk=student_id)
     for line in lines:
-        fields = line.split(";")
-
-        # try:
-        if fields[0]=='id':
+        fields = line.decode('utf-8-sig').split(";")
+        if fields[0] == 'id' or fields[0] == '':
             continue
-        id= str(fields[0])
-        id = int(id)
-        # except ValueError:
-        #     print(fields[0])
-        #     continue
-        day_item = Days.objects.filter(id=id)
+        try:
+            id= int(fields[0])
+        except ValueError:
+            continue
+        day_item = Days.objects.get(id=id)
+
         if day_item:
-            item = Plan.objects.filter(tracks=student.tracks, day=day_item)
-            print(item)
-            if item:
-                item.intent=fields[3]
+            try:
+                if fields[3] != '':
+                    intent = Intent.objects.get(id=int(fields[3]))
+            except Plan.DoesNotExist:
+                intent=None
+
+            try:
+                item = Plan.objects.get(tracks=student.tracks, day=day_item)
+                item.intent=intent
                 item.amount=fields[4]
                 item.save()
-            else:
-                plan=Plan(tracks=student.tracks,day=day_item,intent = fields[3],amount = fields[4])
+            except Plan.DoesNotExist:
+                plan=Plan(tracks=student.tracks,day=day_item,intent = intent ,amount = fields[4])
                 plan.save()
 
 
