@@ -106,7 +106,7 @@ def donload_Plan(request):
     student = Students.objects.get(pk=student_id)
 
     for day_item in Days.objects.all():
-        item=Plan.objects.filter(tracks=student.tracks,day=day_item)
+        item=Plan.objects.get(tracks=student.tracks,day=day_item)
         try:
             if item:
                 if item.intent:
