@@ -26,13 +26,17 @@ class Tasks_Every_Day_Form(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(Tasks_Every_Day_Form, self).__init__(*args, **kwargs)
-        plan=Plan.objects.filter(day__id= self.instance.day.id, tracks__id=self.instance.student.tracks.id)
 
-        if plan.aggregate(count=Count('id'))['count']==1:
+        try:
+            plan = Plan.objects.get(day__id=self.instance.day.id, tracks__id=self.instance.student.tracks.id)
             self.amount = plan.amount
-            plan = plan[0]
             for item in ['task1', 'task2', 'task3']:
                 self.fields[item].help_text = plan.intent.__dict__[item]
+        except Plan.DoesNotExist:
+            pass
+
+
+
 
 #
 # class Demo_Form(forms.ModelForm):
