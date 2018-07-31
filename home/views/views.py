@@ -163,6 +163,8 @@ def upload_Plan(request):
         fields = line.decode('utf-8-sig').split(";")
         if fields[0] == 'id' or fields[0] == '':
             continue
+        if fields[3] == '':
+            continue
         try:
             id= int(fields[0])
         except ValueError:
