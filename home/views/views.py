@@ -110,7 +110,7 @@ def donload_Plan(request):
             item = Plan.objects.get(tracks=student.tracks, day=day_item)
 
             if item.intent:
-                 writer.writerow([day_item.id, day_item, day_item.date_hijri(), item.intent, item.amount])
+                 writer.writerow([day_item.id, day_item, day_item.date_hijri(), item.intent.id, item.amount])
         except Plan.DoesNotExist:
             writer.writerow([day_item.id, day_item, day_item.date_hijri(), '', ''])
     return response
