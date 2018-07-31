@@ -107,11 +107,10 @@ def donload_Plan(request):
 
     for day_item in Days.objects.all():
         item=Plan.objects.filter(tracks=student.tracks,day=day_item)
-        if item:
-            if item.intent:
-                writer.writerow([day_item.id, day_item , day_item.date_hijri() ,item.intent, item.amount])
-                continue
-        writer.writerow([day_item.id, day_item, day_item.date_hijri(), '', ''])
+        try:
+            writer.writerow([day_item.id, day_item, day_item.date_hijri(), item.intent, item.amount])
+        except Plan.DoesNotExist:
+            writer.writerow([day_item.id, day_item, day_item.date_hijri(), '', ''])
     return response
 
 def donload_intent(request):
