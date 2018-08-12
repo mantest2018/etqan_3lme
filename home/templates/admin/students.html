@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">
+    <li style="list-style: none;">
+        <th scope="col">المشرف:</th>
+        <th scope="col">{{ student }}</th>
+        <th scope="col">مسار:</th>
+        <th scope="col">{{ student.tracks }}</th>
+            </li>
+</h1>
+
+{% if latest_list %}
+<table class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th scope="col">الأعضاء</th>
+    </tr>
+    </thead>
+    {% for list in latest_list %}
+    <tbody>
+    <td> {{ forloop.counter }}</td>
+    <td> {{ list.student }}</td>
+    </tbody>
+    {% endfor %}
+</table>
+{% else %}
+<p>لا يوجد بيانات </p>
+{% endif %}
+{% endblock %}

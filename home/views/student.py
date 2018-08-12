@@ -130,7 +130,7 @@ def report_tasks_weeks(request, student_id=''):
 
 
 def tasks_every_month_objects():
-    month = Tasks_Every_Day.objects.filter(day__id__lte=day_now())[0].day.weeks.months.id
+    month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months.id
     return Tasks_Every_Months.objects.filter(months__id__lte=month)
 
 
@@ -156,46 +156,4 @@ def report_tasks_months(request, student_id=''):
     return render(request, 'Student/report_tasks_months.html', context)
 
 
-#    admin
-def all_student(request):
-    try:
-        if not is_login(request):
-            return HttpResponseRedirect('/')
-        if request.session['user_type'] == 'techer':
-            return HttpResponseRedirect('/')
-        student_id = request.session['member_id']
-        student = Students.objects.get(pk=student_id)
-        if not student.is_admin:
-            return HttpResponseRedirect('/')
-        week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
-        latest_list= Tasks_Every_Weeks.objects.filter(weeks__id=week.id,student__tracks=student.tracks)
-        # latest_list = Students.objects.filter(tracks=student.tracks).order_by('student')
-        context = {
-            'latest_list': latest_list,
-            'student': student,
-            'week': week,
-        }
-    except(Students.DoesNotExist):
-        raise Http404("Students does not exist")
-    return render(request, 'Student/all_student.html', context)
-
-def present(request):
-    if "POST" == request.method:
-        try:
-            if not is_login(request):
-                return HttpResponseRedirect('/')
-            if request.session['user_type'] == 'techer':
-                return HttpResponseRedirect('/')
-            student_id = request.session['member_id']
-            student = Students.objects.get(pk=student_id)
-            if not student.is_admin:
-                return HttpResponseRedirect('/')
-            id = request.POST.get('present_id' ,'')
-            item = Tasks_Every_Weeks.objects.get(id=id, student__tracks=student.tracks)
-            item.present= not item.present
-            item.save()
-            return HttpResponse(item.present)
-        except(Students.DoesNotExist , Tasks_Every_Weeks.DoesNotExist):
-            raise Http404("Students does not exist")
-    return HttpResponse("erorr")
 

@@ -16,13 +16,7 @@
 </h1>
 
 {% if latest_list %}
-<button onclick="donload('/donload_intent/')" >تحميل الأهداف</button>
-<button onclick="donload('/donload_Plan/')" >تحميل الخطه</button>
- <form action="/upload_Plan/" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="Plan">
-    <input type="submit" value="رفع الخطه">
-</form>
+
 
 
 <table class="table">
