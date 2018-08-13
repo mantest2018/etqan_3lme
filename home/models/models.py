@@ -150,6 +150,9 @@ class Tasks_Every_Weeks(models.Model):
     def total(self):
         return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks).aggregate(sum=Sum('degree'))['sum']
 
+    def tasks_Day(self):
+        return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks)
+
 
 class Tasks_Every_Months(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)

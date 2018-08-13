@@ -62,7 +62,7 @@ table {
 .content {
     padding: 10px;
     margin: 10px;
-    min-width:fit-content;
+    /*min-width:fit-content;*/
 
     border: 1px solid #dadada;
 }
