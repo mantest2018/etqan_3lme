@@ -28,7 +28,7 @@ urlpatterns = [
 
 
     path('present/', admin.present, name='present'),
-
+    path('task/', admin.task, name='task'),
     #     csv   donlond and upload
     path('upload_Plan/', views.upload_Plan, name='upload_Plan'),
     path('donload_Plan/', views.donload_Plan, name='donload_Plan'),

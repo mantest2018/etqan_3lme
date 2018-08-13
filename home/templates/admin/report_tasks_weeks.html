@@ -74,19 +74,18 @@ padding: 4px;
         <div class="card-max">
             <table onchange="auto_total(this)" class="card-table">
                  {% for item in list.tasks_Day %}
-                <tr>
+                <tr name="{{ item.id }}" >
                     <td> {{item.day.name}}</td>
                       <td>
-        <div class={% if item.task1 %}
+        <div value="{{item.task1}}" onclick="send_to_task(this)" name='task1'  class={% if item.task1 %}
         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
     </td>
     <td>
-        <div class={% if item.task2 %}
+        <div value="{{item.task2}}" onclick="send_to_task(this)" name='task2' class={% if item.task2 %}
         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
     <td>
-        <div class={% if item.task3 %}
+        <div value="{{item.task3}}" onclick="send_to_task(this)" name='task3' class={% if item.task3 %}
         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
- <td><a href="/student/{{ item.student.id }}/tasks_day/{{ item.day.id }}">تحرير</a></td>
                 </tr>
 
                   {% endfor %}
@@ -222,8 +221,25 @@ var xhttp = new XMLHttpRequest();
   xhttp.open("POST", "/present/", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&present_id="+self.attributes["name"].value);
-
 }
+
+function send_to_task(self) {
+var task_id = self.parentElement.parentElement.attributes["name"].value
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText=="True"){
+        self.className="checkboxtrue"
+        }else{
+        self.className="checkboxfalse"
+        }
+    }
+  };
+  xhttp.open("POST", "/task/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&task_id="+task_id+"&"+self.attributes["name"].value+"="+self.attributes["value"].value);
+}
+
 function  call_show_list(self){
  var check=self.parentElement.querySelector('.down');
  show_list(check);
