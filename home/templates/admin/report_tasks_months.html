@@ -1,6 +1,31 @@
 {% extends "layout.html" %}
 
 {% block content %}
+{% if months %}
+<div class="portfolio-items">
+      {% for list in months %}
+  <a href="{{ pathRoot }}./{{list.id}}" class="item">{{list.name}} </a>
+    {% endfor %}
+</div>
+
+<style>
+.portfolio-items {
+    overflow-x: scroll;
+    overflow-x: hidden;
+    white-space: nowrap;
+    box-shadow: 0 0 1px 0px #a2a2a2;
+}
+.item {
+ padding: 4px;
+    background: #f7f7f57d;
+    font-size: 14px;
+    text-align: center;
+    margin: 3px;
+    display: inline-block;
+    border: solid 1px #e6e6e6;
+}
+</style>
+{% endif %}
 <h1 class="title">
     <li style="list-style: none;">
         <th scope="col">المشرف:</th>

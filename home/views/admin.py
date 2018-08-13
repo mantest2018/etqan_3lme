@@ -40,15 +40,19 @@ def report_tasks_weeks(request,week_id=''):
         student = Students.objects.get(pk=student_id)
         if not student.is_admin:
             return HttpResponseRedirect('/')
-        if week_id=='':
-            week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
-        else:
+        week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
+        weeks=Weeks.objects.filter(id__lte=week.id)
+        pathRoot = ''
+        if week_id!='':
             week=Weeks.objects.get(pk=week_id)
+            pathRoot = '.'
         latest_list= Tasks_Every_Weeks.objects.filter(weeks__id=week.id,student__tracks=student.tracks)
         context = {
             'latest_list': latest_list,
             'student': student,
             'week': week,
+            'weeks':weeks,
+           'pathRoot': pathRoot ,
             'path_admin':'students/',
         }
     except(Students.DoesNotExist):
@@ -66,15 +70,19 @@ def report_tasks_months(request,month_id=''):
         student = Students.objects.get(pk=student_id)
         if not student.is_admin:
             return HttpResponseRedirect('/')
-        if month_id == '':
-            month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months
-        else:
+        month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months
+        months= Months.objects.filter(id__lte=month.id)
+        pathRoot=''
+        if month_id != '':
             month = Months.objects.get(pk=month_id)
+            pathRoot = '.'
         latest_list = Tasks_Every_Months.objects.filter(months=month,student__tracks=student.tracks)
         context = {
             'latest_list': latest_list,
             'student': student,
+            'months':months,
             'month': month,
+            'pathRoot':pathRoot,
             'path_admin':'students/',
         }
     except(Students.DoesNotExist):
