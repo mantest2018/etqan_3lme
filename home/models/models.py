@@ -154,7 +154,7 @@ class Tasks_Every_Weeks(models.Model):
         return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks)
 
 class test_form(forms.Form):
-    test = forms.FloatField(label='الإختبار', required=False, min_value=0, max_value=100)
+    test = forms.FloatField(label='الإختبار', required=False, min_value=0, max_value=30)
 
 class Tasks_Every_Months(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
@@ -182,7 +182,7 @@ class Tasks_Every_Months(models.Model):
     def degree(self):
         if self.total_all() ==0 or self.count_present_all()==0:
             return 'يوجد نقص في الإدخال'
-        degree= 50 * (self.total()/self.total_all())+20*(self.count_present()/self.count_present_all())+(self.test/100)*30
+        degree= 50 * (self.total()/self.total_all())+20*(self.count_present()/self.count_present_all())+self.test
         return "%.2f%%" %  degree
 
 
