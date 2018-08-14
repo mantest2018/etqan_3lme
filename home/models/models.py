@@ -1,5 +1,5 @@
 import datetime
-
+from django import forms
 from django.db import models
 
 
@@ -153,6 +153,8 @@ class Tasks_Every_Weeks(models.Model):
     def tasks_Day(self):
         return Tasks_Every_Day.objects.filter(student=self.student,day__weeks=self.weeks)
 
+class test_form(forms.Form):
+    test = forms.FloatField(label='الإختبار', required=False, min_value=0, max_value=100)
 
 class Tasks_Every_Months(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
@@ -182,3 +184,13 @@ class Tasks_Every_Months(models.Model):
             return 'يوجد نقص في الإدخال'
         degree= 50 * (self.total()/self.total_all())+20*(self.count_present()/self.count_present_all())+(self.test/100)*30
         return "%.2f%%" %  degree
+
+
+
+    def test_as(self):
+        try:
+            form = test_form(initial={'test': self.test})
+            form['test'].html_name =  str(self.id)
+            return form['test']
+        except :
+            return 'يوجد مشكلة تواصل مع المسؤول عن الموقع'

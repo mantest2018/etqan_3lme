@@ -66,8 +66,12 @@
 
                             <a class="nav-link" href="/plan/">الخطه</a>
 
-
                         </li>
+               {% if 'administrator' in request.session %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/administrator/report_tasks_months/">الإختبار</a>
+                        </li>
+            {% endif %}
                         {% endif %}
                 {% endif %}
                 {% if 'techer' in request.session.user_type %}

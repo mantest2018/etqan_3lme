@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block content %}
+{% if months %}
+<div class="portfolio-items">
+      {% for list in months %}
+  <a href="{{ pathRoot }}./{{list.id}}" class="item">{{list.name}} </a>
+    {% endfor %}
+</div>
+
+<style>
+.portfolio-items {
+margin-bottom: 20px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    box-shadow: 0 0 1px 0px #a2a2a2;
+}
+.item {
+ padding: 4px;
+    background: #f7f7f57d;
+    font-size: 14px;
+    text-align: center;
+    margin: 3px;
+    display: inline-block;
+    border: solid 1px #e6e6e6;
+}
+</style>
+{% endif %}
+<h1 class="title">
+    <li style="list-style: none;">
+        <th scope="col">المدير:</th>
+        <th scope="col">{{ student }}</th>
+    </li>
+          <li style="list-style: none;">
+        <th scope="col">رصد إختبار شهر:</th>
+        <th scope="col">{{ month }}</th>
+    </li>
+</h1>
+
+
+
+{% if latest_list %}
+<form action="{{ pathRoot }}./{{list.id}}" method="post" role="input">{% csrf_token %}
+<table class="table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th scope="col">الأعضاء</th>
+        <th scope="col"> المهام الطلوبة</th>
+        <th scope="col">المنفذ</th>
+        <th scope="col">الحضور</th>
+        <th scope="col">الإختبار</th>
+        <th scope="col">الدرجة</th>
+    </tr>
+    </thead>
+    {% for list in latest_list %}
+    <tbody>
+    <td> {{ forloop.counter }}</td>
+    <td> {{ list.student }}</td>
+    <td> {{ list.total_all }}</td>
+    <td> {{ list.total }}</td>
+     <td> {{ list.count_present }}</td>
+     <td> {{ list.test_as }}</td>
+     <td> {{ list.degree  }}</td>
+    </tbody>
+    {% endfor %}
+</table>
+<button type="submit" class="btn btn-lg btn-primary btn-block">حفظ</button>
+</form>
+{% else %}
+<p>لا يوجد بيانات </p>
+{% endif %}
+{% endblock %}

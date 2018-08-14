@@ -21,15 +21,6 @@ def index(request):
         if request.session['user_type'] == 'techer':
            return  print('**********************************')
             # return students(request, day_now())
-
-    # last_day = Reports_all_days.objects.filter(id_demo=True, id__lt=day_now()).latest('id')
-    # tasks = Tasks_every_day.objects.filter(reports_all_days__id__lte=last_day.id)
-    # context = dict(
-    #     number_pages=tasks.aggregate(sum=Sum('number_pages'))['sum'],
-    #     link=tasks.aggregate(sum=Sum('link'))['sum']+tasks.aggregate(sum=Sum('review'))['sum'],
-    #     last_day=last_day,
-    # )
-    # csrfContext = RequestContext(request)
     return HttpResponseRedirect('/login')
 
 
@@ -42,6 +33,8 @@ def login(request):
                     request.session['user_type'] = request.POST['user_type']
                     if m.is_admin:
                         request.session['admin']=None
+                        if m.choice_text =='administrator':
+                            request.session['administrator'] = None
                     request.session['member_id'] = m.id
                     request.session.set_test_cookie()
                     return HttpResponseRedirect('/')
@@ -73,6 +66,10 @@ def is_admin(request):
         return True
     return False
 
+def is_administrator(request):
+    return is_admin(request) and "administrator" in request.session
+
+
 def logout(request):
     if request.session.test_cookie_worked():
         request.session.delete_test_cookie()
@@ -82,6 +79,8 @@ def logout(request):
         del request.session['user_type']
     if "admin" in request.session:
         del request.session['admin']
+    if "administrator" in request.session:
+        del request.session['administrator']
     return HttpResponseRedirect('/')
 
 def update(request):
