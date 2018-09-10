@@ -52,15 +52,24 @@
                             {% endif %}
 
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/{{path_admin}}report_tasks_days/">التقرير الأسبوعي</a>
+             {% if path_admin %}
+
+                            <a class="nav-link" href="/{{path_admin}}report_tasks_weeks/">التقرير الأسبوعي</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/{{path_admin}}report_tasks_weeks/">التقرير الشهري</a>
+                            <a class="nav-link" href="/{{path_admin}}report_tasks_months/">التقرير الشهري</a>
+                        </li>
+                              {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/report_tasks_days/">التقرير الأسبوعي</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/{{path_admin}}report_tasks_months/">التقرير السنوي</a>
+                            <a class="nav-link" href="/report_tasks_weeks/">التقرير الشهري</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/report_tasks_months/">التقرير السنوي</a>
+                        </li>
+            {% endif %}
                           {% if 'admin' in request.session %}
                         <li class="nav-item">
 

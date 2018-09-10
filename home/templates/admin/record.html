@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">
+    <li style="list-style: none;">
+        <th scope="col">المشرف:</th>
+        <th scope="col">{{ student }}</th>
+        <th scope="col">مسار:</th>
+        <th scope="col">{{ student.tracks }}</th>
+    </li>
+    <li style="list-style: none;">
+        <th scope="col">محضر للأسبوع:</th>
+        <th scope="col">{{ week }}</th>
+
+    </li>
+</h1>
+<table >
+{{record_Form }}
+</table>
+
+{% endblock %}

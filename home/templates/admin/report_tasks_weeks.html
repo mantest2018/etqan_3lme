@@ -20,10 +20,10 @@
 <div>الأسبوع</div>
 <div class="portfolio-items">
     {% for list in weeks %}
-
     <a href="{{ pathRoot }}./{{list.id}}" class="item">{{list}}</a>
     {% endfor %}
 </div>
+                <a class="btn btn-outline-success my-2 my-sm-0" href="/record/{{ week.id }}/">محضر الأسبوع</a>
 
 <style>
 .portfolio-items {

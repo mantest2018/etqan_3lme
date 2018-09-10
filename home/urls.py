@@ -23,6 +23,10 @@ urlpatterns = [
     # path('students/report_tasks_days/', admin.report_tasks_days, name='report_tasks_days'),
     path('students/report_tasks_weeks/', admin.report_tasks_weeks, name='report_tasks_weeks'),
     path('students/report_tasks_weeks/<int:week_id>/', admin.report_tasks_weeks, name='report_tasks_weeks'),
+    # record   weeks
+    path('record/', admin.record, name='record'),
+    path('record/<int:week_id>/', admin.record, name='record'),
+
     path('students/report_tasks_months/', admin.report_tasks_months, name='report_tasks_months'),
     path('students/report_tasks_months/<int:month_id>/', admin.report_tasks_months, name='report_tasks_months'),
     # administrator

@@ -54,7 +54,7 @@ class Days(models.Model):
     end_time = models.DateTimeField(default=datetime.datetime.now(), null=True, blank=True)
 
     def __str__(self):
-        return str(self.name) + '  ' + str(self.weeks.months )
+        return str(self.name) + '  ' + str(self.date_hijri() )
 
     def date_hijri(self):
         from library.umalqurra.hijri_date import HijriDate

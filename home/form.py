@@ -1,8 +1,8 @@
 from django import forms
 from django.db.models import Count
 
-from .models import Plan
-from .models import Tasks_Every_Day
+from .models import Plan,Tasks_Every_Day,Days
+
 
 
 # class CoursesForm(forms.ModelForm):
@@ -36,20 +36,15 @@ class Tasks_Every_Day_Form(forms.ModelForm):
             pass
 
 
+class Record_Form(forms.Form):
+    day = forms.ModelChoiceField(label='اليوم',queryset=Days.objects.all())
+    time = forms.CharField(label='الزمن', required=False)
+    working = forms.CharField(label='أعمال الجلسة', required=False, widget=forms.Textarea)
+    achievements =  forms.CharField(label='المنجزات', required=False, widget=forms.Textarea)
+    Costs = forms.CharField(label='التكاليف القادمة', required=False, widget=forms.Textarea)
+    recommendations = forms.CharField(label='التوصيات', required=False, widget=forms.Textarea)
 
+    def __init__(self,week ,  *args, **kwargs):
+        super(Record_Form, self).__init__(*args, **kwargs)
+        self.fields['day'].queryset=Days.objects.filter(weeks__id=week)
 
-#
-# class Demo_Form(forms.ModelForm):
-#     present = forms.ModelChoiceField(label='الحضور', queryset=Present.objects.all())
-#     number_pages = forms.FloatField(label='عدد الأوجه', required=False, min_value=0, max_value=100)
-#     count_erorr = forms.IntegerField(label='الأخطاء واللحون', required=False, min_value=0, max_value=100)
-#     count_alirt = forms.IntegerField(label='التنبيهات', required=False, min_value=0, max_value=100)
-#     notes = forms.CharField(label='ملاحظات', required=False, widget=forms.Textarea)
-#
-#     class Meta:
-#         model = Demo
-#         fields = ['present', 'number_pages', 'count_erorr', 'count_alirt', 'notes']
-
-
-# from django.forms import modelformset_factory
-# Demo_Form_Set = modelformset_factory(Demo, fields=('present',))
