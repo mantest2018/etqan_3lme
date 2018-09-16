@@ -10,16 +10,24 @@ from .models import Plan,Tasks_Every_Day,Days
 #         model = Courses
 #         fields = ['name_course', 'phone_nemper']
 
+CHOICES = (
+    (None, "مستمر"),
+    (True, "متوقف")
+)
 
 class Tasks_Every_Day_Form(forms.ModelForm):
     task1 = forms.BooleanField(label='المهمة الأولى', required=False)
     task2 = forms.BooleanField(label='المهمة الثانية', required=False)
     task3 = forms.BooleanField(label='المهمة الثالثة', required=False)
+    is_stop=forms.ChoiceField(choices=CHOICES,
+        label='الحالة',
+        required=False)
+    # is_stop = forms.NullBooleanField(label='الحالة', required=False)
     amount=False
 
     class Meta:
         model = Tasks_Every_Day
-        fields = ['task1', 'task2', 'task3']
+        fields = ['task1', 'task2', 'task3','is_stop']
 
     def getAmount(self):
         return self.amount

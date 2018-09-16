@@ -110,12 +110,14 @@ def updateData(Student, day):
         report = Tasks_Every_Months(student=Student, months=day.weeks.months)
         report.save()
 
+
 class Tasks_Every_Day(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
     day = models.ForeignKey(Days, on_delete=models.CASCADE)
     task1 = models.BooleanField(default=False)
     task2 = models.BooleanField(default=False)
     task3 = models.BooleanField(default=False)
+    is_stop = models.NullBooleanField(default=None, null=True)
     degree = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
