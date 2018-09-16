@@ -117,7 +117,7 @@ class Tasks_Every_Day(models.Model):
     task1 = models.BooleanField(default=False)
     task2 = models.BooleanField(default=False)
     task3 = models.BooleanField(default=False)
-    is_stop = models.NullBooleanField(default=None, null=True)
+    is_stop = models.NullBooleanField(default=None, null=True, blank=True)
     degree = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
@@ -125,7 +125,12 @@ class Tasks_Every_Day(models.Model):
 
     def save(self, *args, **kwargs):
         total=0
+        if self.is_stop =="":
+            self.is_stop=None
         for item in ['task1','task2','task3']:
+            # if self.is_stop:
+            #     self.__dict__[item]=False
+            #     continue
             if self.__dict__[item]:
                 total += 1
         self.degree = total
