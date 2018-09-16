@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tracks, Intent, Years, Months, Weeks, Days ,Plan ,Students,Tasks_Every_Day,Tasks_Every_Weeks,Tasks_Every_Months
+from .models import Tracks, Intent, Years, Months, Weeks, Days ,Plan ,Students,Tasks_Every_Day,Tasks_Every_Weeks,Tasks_Every_Months ,Record
 
 # Register your models here.
 
@@ -61,3 +61,4 @@ admin.site.register(Students,Students_Admin)
 admin.site.register(Tasks_Every_Day)
 admin.site.register(Tasks_Every_Weeks)
 admin.site.register(Tasks_Every_Months)
+admin.site.register(Record)

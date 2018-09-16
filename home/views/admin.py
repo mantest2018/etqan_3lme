@@ -71,17 +71,32 @@ def record(request, week_id=''):
         week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
         weeks = Weeks.objects.filter(id__lte=week.id)
         pathRoot = ''
+        from ..models import Record
         from ..form import Record_Form
+
         if  week_id == '':
-            record_Form=Record_Form(week.id)
+            weeks_id=week.id
         else:
-            record_Form = Record_Form(week_id)
+            weeks_id = week_id
+        try:
+            record = Record.objects.get(weeks_id=weeks_id,tracks=student.tracks)
+        except Record.DoesNotExist:
+            record = Record(weeks_id=weeks_id,tracks=student.tracks)
+
+        record_Form = Record_Form(request.POST or None,instance=record)
+        is_save=''
+
+        if "POST" == request.method:
+            record_Form.save()
+            is_save = 'تم حفظ البيانات'
+
 
         if week_id != '':
             week = Weeks.objects.get(pk=week_id)
             pathRoot = '.'
         latest_list = Tasks_Every_Weeks.objects.filter(weeks__id=week.id, student__tracks=student.tracks)
         context = {
+            'is_save':is_save,
             'record_Form':record_Form,
             'latest_list': latest_list,
             'student': student,

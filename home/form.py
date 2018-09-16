@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import Count
 
-from .models import Plan,Tasks_Every_Day,Days
+from .models import Plan,Tasks_Every_Day,Days,Record
 
 
 
@@ -44,15 +44,21 @@ class Tasks_Every_Day_Form(forms.ModelForm):
             pass
 
 
-class Record_Form(forms.Form):
-    day = forms.ModelChoiceField(label='اليوم',queryset=Days.objects.all())
-    time = forms.CharField(label='الزمن', required=False)
-    working = forms.CharField(label='أعمال الجلسة', required=False, widget=forms.Textarea)
-    achievements =  forms.CharField(label='المنجزات', required=False, widget=forms.Textarea)
-    Costs = forms.CharField(label='التكاليف القادمة', required=False, widget=forms.Textarea)
-    recommendations = forms.CharField(label='التوصيات', required=False, widget=forms.Textarea)
+class Record_Form(forms.ModelForm):
+    day = forms.ModelChoiceField(label='اليوم',queryset=Days.objects.none())
+    time = forms.CharField(label='الزمن', required=False,max_length=50)
+    working = forms.CharField(label='أعمال الجلسة', required=False, widget=forms.Textarea,max_length=250)
+    achievements =  forms.CharField(label='المنجزات', required=False, widget=forms.Textarea,max_length=250)
+    Costs = forms.CharField(label='التكاليف القادمة', required=False, widget=forms.Textarea,max_length=250)
+    recommendations = forms.CharField(label='التوصيات', required=False, widget=forms.Textarea,max_length=250)
 
-    def __init__(self,week ,  *args, **kwargs):
+    def __init__(self,  *args, **kwargs):
+
         super(Record_Form, self).__init__(*args, **kwargs)
-        self.fields['day'].queryset=Days.objects.filter(weeks__id=week)
+        self.fields['day'].queryset=Days.objects.filter(weeks__id=self.instance.weeks.id)
+
+    class Meta:
+        model = Record
+        exclude=['weeks','tracks']
+
 
