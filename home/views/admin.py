@@ -192,10 +192,11 @@ def task(request):
                 return HttpResponseRedirect('/')
             student_id = request.session['member_id']
             student = Students.objects.get(pk=student_id)
-            if not student.is_admin:
-                return HttpResponseRedirect('/')
             id = request.POST.get('task_id', '')
-            item = Tasks_Every_Day.objects.get(id=id, student__tracks=student.tracks)
+            if not student.is_admin:
+                item = Tasks_Every_Day.objects.get(id=id, student__id=student.id)
+            else:
+                item = Tasks_Every_Day.objects.get(id=id, student__tracks=student.tracks)
             bo = 'erorr'
             for i in ['task1', 'task2', 'task3']:
                 if request.POST.get(i, '') != '':

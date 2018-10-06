@@ -20,31 +20,57 @@
         <th scope="col"> المهمة 1</th>
         <th scope="col"> المهمة 2</th>
         <th scope="col">المهمة 3</th>
-        <th scope="col">التحرير</th>
+        <!--<th scope="col">التحرير</th>-->
 
 
     </tr>
     </thead>
     {% for list in latest_list %}
-    <tbody>
+    <tr name="{{ list.id }}">
     <td> {{ forloop.counter }}</td>
     <td> {{ list.day.date_hijri }}</td>
     <td> {{ list.day.name }}</td>
     <td>
-        <div class={% if list.task1 %}
+              <div value="{{list.task1}}" onclick="send_to_task(this)" name='task1'  class={% if list.task1 %}
         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
     </td>
     <td>
-        <div class={% if list.task2 %}
-        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
-    <td>
-        <div class={% if list.task3 %}
-        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
-    <td><a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>
+                      <div value="{{list.task2}}" onclick="send_to_task(this)" name='task2'  class={% if list.task2 %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
 
-    </tbody>
+    </td>
+    <td>
+              <div value="{{list.task3}}" onclick="send_to_task(this)" name='task3'  class={% if list.task3 %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
+    </td>
+    <!--<td><a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>-->
+
+    </tr>
     {% endfor %}
 </table>
+   <script>
+
+function send_to_task(self) {
+var task_id = self.parentElement.parentElement.attributes["name"].value
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText=="True"){
+        self.className="checkboxtrue"
+        }else{
+        self.className="checkboxfalse"
+        }
+    }
+  };
+  xhttp.open("POST", "/task/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&task_id="+task_id+"&"+self.attributes["name"].value+"="+self.attributes["value"].value);
+}
+
+
+   </script>
+
+
 {% else %}
 <p>لا يوجد بيانات </p>
 {% endif %}

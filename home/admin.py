@@ -53,7 +53,7 @@ admin.site.register(Days,Days_Admin)
 admin.site.register(Plan,Plan_Admin)
 
 class Students_Admin(admin.ModelAdmin):
-    list_display = ['student','tracks', 'is_admin']
+    list_display = ['student','tracks', 'is_admin','choice_text']
     class Meta:
         model = Students
 

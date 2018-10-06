@@ -81,9 +81,18 @@ class Students(models.Model):
     password = models.CharField(max_length=8)
     is_show = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    # permissions = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
         return  str(self.student)
+    #
+    # def get_permissions(self):
+    #     # import json
+    #     return eval(self.permissions)
+
+    # def set_permissions(self):
+    #     import json
+    #     return eval(self.permissions)
 
 
 
@@ -117,7 +126,7 @@ class Tasks_Every_Day(models.Model):
     task1 = models.BooleanField(default=False)
     task2 = models.BooleanField(default=False)
     task3 = models.BooleanField(default=False)
-    is_stop = models.NullBooleanField(default=None, null=True, blank=True)
+    is_stop = models.NullBooleanField(default=True, null=True, blank=True)
     degree = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
@@ -125,8 +134,8 @@ class Tasks_Every_Day(models.Model):
 
     def save(self, *args, **kwargs):
         total=0
-        if self.is_stop =="":
-            self.is_stop=None
+        # if self.is_stop =="":
+        #     self.is_stop=None
         for item in ['task1','task2','task3']:
             # if self.is_stop:
             #     self.__dict__[item]=False
