@@ -126,7 +126,7 @@ class Tasks_Every_Day(models.Model):
     task1 = models.BooleanField(default=False)
     task2 = models.BooleanField(default=False)
     task3 = models.BooleanField(default=False)
-    is_stop = models.NullBooleanField(default=True, null=True, blank=True)
+    is_stop = models.NullBooleanField(default=False, null=True, blank=True)
     degree = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
