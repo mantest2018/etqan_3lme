@@ -25,7 +25,6 @@ def updateData(Student, day):
 
 
 def tasks_every_day(request, day_id=day_now(), student_id=''):
-
     if student_id == '':
         if request.session['user_type'] == 'student':
             student_id = request.session['member_id']
@@ -39,7 +38,7 @@ def tasks_every_day(request, day_id=day_now(), student_id=''):
         if request.session['user_type'] == 'student':
             if student_id != request.session['member_id']:
                 admin = Students.objects.get(pk=request.session['member_id'])
-                if not(admin.is_admin and admin.tracks==s.tracks):
+                if not (admin.is_admin and admin.tracks == s.tracks):
                     return HttpResponseRedirect('/')
         if request.session['user_type'] == 'techer':
             if s.course.id != request.session['member_id']:
@@ -48,8 +47,17 @@ def tasks_every_day(request, day_id=day_now(), student_id=''):
         fotmedit = Tasks_Every_Day_Form(request.POST or None, instance=report)
         is_save = ''
         if "POST" == request.method:
-            fotmedit.save()
-            is_save = 'تم حفظ البيانات'
+            if bool(request.POST.get('is_stop',False)) == True:
+                count_stoping = Tasks_Every_Day.objects.filter(student=student_id, is_stop=True).count()
+                if count_stoping > 20:
+                    is_save = 'لا يمكن حفظ البيانات تم تجاوز عدد المرات المسموح بها في الاستئذان'
+                else:
+                    fotmedit.save()
+                    is_save = 'تم حفظ البيانات عدد الأيام المتبقية للاستئذان' + str(count_stoping)
+            else:
+                fotmedit.save()
+                is_save = 'تم حفظ البيانات '
+
         degree = "%.2f%%" % (100 * report.degree / 3)
         context = {'fotmedit': fotmedit, 'report': report, 'is_save': is_save, 'degree': degree}
     except(Plan.DoesNotExist, Students.DoesNotExist):
@@ -94,7 +102,7 @@ def report_tasks_days(request, student_id=''):
             latest_list = tasks_every_day_objects(True).filter(student=request.session['member_id']).order_by('day')
         if request.session['user_type'] == 'techer':
             latest_list = tasks_every_day_objects(True).filter(student=student_id,
-                                                           student__tracks=request.session['member_id']).order_by(
+                                                               student__tracks=request.session['member_id']).order_by(
                 'day')
 
         context = {'latest_list': latest_list, 'student': student}
@@ -155,6 +163,3 @@ def report_tasks_months(request, student_id=''):
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'Student/report_tasks_months.html', context)
-
-
-

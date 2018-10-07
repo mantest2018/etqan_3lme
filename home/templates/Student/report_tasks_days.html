@@ -17,10 +17,11 @@
         <th>#</th>
         <th scope="col">التاريخ</th>
         <th scope="col">اليوم</th>
+        <th scope="col">الحالة</th>
         <th scope="col"> المهمة 1</th>
         <th scope="col"> المهمة 2</th>
         <th scope="col">المهمة 3</th>
-        <!--<th scope="col">التحرير</th>-->
+        <th scope="col">التحرير</th>
 
 
     </tr>
@@ -30,20 +31,22 @@
     <td> {{ forloop.counter }}</td>
     <td> {{ list.day.date_hijri }}</td>
     <td> {{ list.day.name }}</td>
+        <td> {% if list.is_stop %}
+        متوقف{% else %}---{% endif %}</td>
     <td>
-              <div value="{{list.task1}}" onclick="send_to_task(this)" name='task1'  class={% if list.task1 %}
+        <div value="{{list.task1}}" onclick="send_to_task(this)" name='task1' class={% if list.task1 %}
         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
     </td>
-    <td>
-                      <div value="{{list.task2}}" onclick="send_to_task(this)" name='task2'  class={% if list.task2 %}
-        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
+        <td>
+            <div value="{{list.task2}}" onclick="send_to_task(this)" name='task2' class={% if list.task2 %}
+            "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
 
+        </td>
+        <td>
+            <div value="{{list.task3}}" onclick="send_to_task(this)" name='task3' class={% if list.task3 %}
+            "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
     </td>
-    <td>
-              <div value="{{list.task3}}" onclick="send_to_task(this)" name='task3'  class={% if list.task3 %}
-        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
-    </td>
-    <!--<td><a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>-->
+    <td><a href="/student/{{ list.student.id }}/tasks_day/{{ list.day.id }}">تحرير</a></td>
 
     </tr>
     {% endfor %}
