@@ -223,7 +223,8 @@ class Tasks_Every_Months(models.Model):
 class Record(models.Model):
     tracks = models.ForeignKey(Tracks, on_delete=models.CASCADE)
     weeks = models.ForeignKey(Weeks, on_delete=models.CASCADE)
-    day = models.ForeignKey(Days, on_delete=models.CASCADE)
+    day = models.ForeignKey(Days,blank=True, null=True, on_delete=models.CASCADE)
+    other = models.CharField(max_length=50, null=True, blank=True)
     time = models.CharField(max_length=50, null=True, blank=True)
     working = models.CharField(max_length=250, null=True, blank=True)
     achievements = models.CharField(max_length=250, null=True, blank=True)

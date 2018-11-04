@@ -45,7 +45,8 @@ class Tasks_Every_Day_Form(forms.ModelForm):
 
 
 class Record_Form(forms.ModelForm):
-    day = forms.ModelChoiceField(label='اليوم',queryset=Days.objects.none())
+    day = forms.ModelChoiceField(label='اليوم',queryset=Days.objects.none(),required=False)
+    other = forms.CharField(label='آخر', required=False, max_length=50)
     time = forms.CharField(label='الزمن', required=False,max_length=50)
     working = forms.CharField(label='أعمال الجلسة', required=False, widget=forms.Textarea,max_length=250)
     achievements =  forms.CharField(label='المنجزات', required=False, widget=forms.Textarea,max_length=250)
