@@ -77,9 +77,16 @@
 
                         </li>
                {% if 'administrator' in request.session %}
+
                         <li class="nav-item">
                             <a class="nav-link" href="/administrator/report_tasks_months/">الإختبار</a>
                         </li>
+               <li class="nav-item">
+                            <a class="nav-link" href="/administrator/report_tasks_weeks/">التقرير الأسبوعي العام</a>
+                        </li>
+
+
+
             {% endif %}
                         {% endif %}
                 {% endif %}

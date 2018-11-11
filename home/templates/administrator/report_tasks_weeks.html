@@ -1,0 +1,306 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">
+    <li style="list-style: none;">
+        <th scope="col">المشرف:</th>
+        <th scope="col">{{ student }}</th>
+        <th scope="col">مسار:</th>
+        <th scope="col">{{ student.tracks }}</th>
+    </li>
+    <li style="list-style: none;">
+        <th scope="col">تقرير الأسبوع:</th>
+        <th scope="col">{{ week }}</th>
+
+    </li>
+</h1>
+
+
+{% if weeks %}
+<div>الأسبوع</div>
+<div class="portfolio-items">
+    {% for list in weeks %}
+    <a href="{{ pathRoot }}./{{list.id}}" class="item">{{list}}</a>
+    {% endfor %}
+</div>
+
+<style>
+.portfolio-items {
+margin-bottom: 20px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    box-shadow: 0 0 1px 0px #a2a2a2;
+}
+.item {
+padding: 4px;
+    background: #f7f7f57d;
+    font-size: 14px;
+    text-align: center;
+    margin: 3px;
+    display: inline-block;
+    border: solid 1px #e6e6e6;
+}
+
+</style>
+{% endif %}
+
+
+
+
+{% if latest_list %}
+
+{% load static %}
+
+
+{% for track in latest_list %}
+    <div  class="box-track" >
+        <a class="btn btn-outline-success my-2 my-sm-0" href="/administrator/record/{{ week.id }}/{{ track.0.student.tracks.id }}/">محضر الأسبوع</a>
+        <div class="name-track" >{{ track.0.student.tracks }}</div>
+        {% for list in track %}
+
+                    <div class="card-list">
+                        <div id="name" class="name"
+                             style="color: #007bff;cursor:pointer;overflow: hidden;width: 180px;white-space: nowrap; text-overflow: ellipsis;"
+                             onclick="call_show_list(this)">
+                            {{ forloop.counter }} : {{ list.student }}
+                        </div>
+                        <div class="redos">
+                            <div  class="num total_all">{{ list.total_all }}</div>
+                            <div    class="num total">{{ list.total }}</div>
+                            <img style="color: #007bff;cursor: pointer;" onclick="show_list(this)" class="icons down"
+                                 src="{% static 'style/icon/angle-down-solid.svg' %}">
+                            <div class="{{ list.chpresent }}" name="{{ list.id }}" onclick="send_to(this)"></div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" ></div>
+                        </div>
+                        <div class="card-max">
+                            <table onchange="auto_total(this)" class="card-table">
+                                 {% for item in list.tasks_Day %}
+                                <tr name="{{ item.id }}" >
+                                    <td> {{item.day.name}}</td>
+                                      <td>
+                        <div value="{{item.task1}}" onclick="send_to_task(this)" name='task1'  class={% if item.task1 %}
+                        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
+                    </td>
+                    <td>
+                        <div value="{{item.task2}}" onclick="send_to_task(this)" name='task2' class={% if item.task2 %}
+                        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
+                    <td>
+                        <div value="{{item.task3}}" onclick="send_to_task(this)" name='task3' class={% if item.task3 %}
+                        "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div></td>
+                                </tr>
+
+                                  {% endfor %}
+
+                            </table>
+                        </div>
+                    </div>
+        {% endfor %}
+    </div>
+{% endfor %}
+    <style>
+.checkboxtrue ,.checkboxfalse{
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    }
+
+.box-track {
+    display: inline-table;
+}
+
+ .card-list   .progress {
+    height: 2px;
+    margin: 2px 0px;
+    padding: 0px 0px;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+}
+
+
+.card-list .progress-bar {
+ margin: 0px;
+    float: left;
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    line-height: 5px;
+    color: #fff;
+    text-align: center;
+    background-color: #1d71b9 ;
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+    -webkit-transition: width .6s ease;
+    -o-transition: width .6s ease;
+    transition: width .6s ease;
+}
+
+form {
+    display: inline-block;
+}
+.card-list {
+    position: relative ;
+    box-shadow: 0 1px 2px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    width: 350px;
+    background: #f8f9f8;
+    padding: 5px;
+    margin: 4px;
+}
+
+.card-list:hover {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2);
+    background: #fcfdfc;
+    -webkit-transform: scale(1.05);
+   transform: scale(1.05);
+}
+
+
+.redos .num {
+width: 40px;
+    margin-left: 10px;
+    display: inline-block;
+}
+
+
+.card-list input {
+    text-align: center;
+    width: 60px;
+    padding-right: 9px;
+}
+
+.card-list td {
+    text-align: center;
+    width: 100px;
+    }
+
+.redos{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    padding: 2px 5px;
+    }
+
+.card-max{
+    background: #39312312;
+    margin: auto;
+}
+    .table{
+        width: 100%;
+
+    }
+
+.card-table {
+    margin-top: 3px;
+    padding: 4px 0px;
+    display: none;
+}
+    /*       icons          */
+.icons  {
+    height: 20px;
+    width: 20px;
+}
+
+/*.check {
+ display: none;
+}*/
+
+
+    </style>
+
+
+    <script>
+
+    function donload(self) {
+   window.open(self);
+  }
+
+function send_to(self) {
+
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText=="True"){
+        self.className="checkboxtrue"
+        }else{
+        self.className="checkboxfalse"
+        }
+    }
+  };
+  xhttp.open("POST", "/present/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&present_id="+self.attributes["name"].value);
+}
+
+function send_to_task(self) {
+var task_id = self.parentElement.parentElement.attributes["name"].value
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText=="True"){
+        self.className="checkboxtrue"
+        }else{
+        self.className="checkboxfalse"
+        }
+    }
+  };
+  xhttp.open("POST", "/task/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&task_id="+task_id+"&"+self.attributes["name"].value+"="+self.attributes["value"].value);
+}
+
+function  call_show_list(self){
+ var check=self.parentElement.querySelector('.down');
+ show_list(check);
+}
+function show_list(self){
+     var card_table=self.parentElement.parentElement.querySelector('.card-table');
+    var angle_down=self.parentElement.parentElement.querySelector('.icons');
+
+    var testElements = document.getElementsByClassName('card-list');
+var testDivs = Array.prototype.filter.call(testElements, function(testElement){
+
+    if(testElement.querySelector('.card-table')==card_table && card_table.style.display!=="block"){
+       angle_down.style.transform = "rotate(180deg)";
+       card_table.style.display="block";
+
+       }else{
+        testElement.querySelector('.icons').style.transform = "rotate(0deg)";
+        testElement.querySelector('.card-table').style.display= "none";
+       }
+    return true;
+});
+
+}
+
+window.onload = function(){
+    color();
+}
+function color(){
+        var testElements = document.getElementsByClassName('progress-bar');
+var testDivs = Array.prototype.filter.call(testElements, function(testElement){
+var total_all= Number(testElement.parentElement.parentElement.querySelector('.total_all').innerHTML);
+var total=Number( testElement.parentElement.parentElement.querySelector('.total').innerHTML);
+     var co= 0;
+if (total_all!=0){
+co=total/total_all;
+}
+testElement.style.width=(co*100)+'%';
+    var color= 'rgb('+(250-(co*250)).toString()+', '+(0+(co*170)).toString()+', '+(185-(co*156)).toString()+')';
+   testElement.style.backgroundColor = color;
+
+         });
+
+
+
+
+}
+
+    </script>
+
+</table>
+{% else %}
+<p>لا يوجد بيانات </p>
+{% endif %}
+{% endblock %}

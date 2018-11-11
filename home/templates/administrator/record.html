@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="title">
+    <li style="list-style: none;">
+        <th scope="col">مسار:</th>
+        <th scope="col">{{ tracks }}</th>
+    </li>
+    <li style="list-style: none;">
+        <th scope="col">محضر للأسبوع:</th>
+        <th scope="col">{{ week }}</th>
+
+    </li>
+</h1>
+<h1>{{is_save}}</h1>
+<form action="" method="post" role="input">{% csrf_token %}
+<table >
+{{record_Form }}
+    </table>
+   <button type="submit" class="btn btn-lg btn-primary btn-block">حفظ</button>
+</form>
+
+{% endblock %}
