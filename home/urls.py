@@ -46,7 +46,4 @@ urlpatterns = [
     path('donload_Plan/', views.donload_Plan, name='donload_Plan'),
     path('donload_intent/', views.donload_intent, name='donload_intent'),
 
-
-
-
 ]

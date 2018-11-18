@@ -16,6 +16,7 @@
 </h1>
 
 
+
 {% if weeks %}
 <div>الأسبوع</div>
 <div class="portfolio-items">
@@ -99,8 +100,9 @@ padding: 4px;
         {% endfor %}
     </div>
 {% endfor %}
+
     <style>
-.checkboxtrue ,.checkboxfalse{
+.checkboxtrue ,.checkboxfalse ,.checkboxnull{
     width: 20px;
     height: 20px;
     display: inline-block;
@@ -221,11 +223,15 @@ function send_to(self) {
 var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
+        //alert(this.responseText);
         if (this.responseText=="True"){
         self.className="checkboxtrue"
-        }else{
+        }else if(this.responseText=="False"){
         self.className="checkboxfalse"
+        }else{
+        self.className="checkboxnull"
         }
+
     }
   };
   xhttp.open("POST", "/present/", true);

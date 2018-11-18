@@ -149,7 +149,7 @@ class Tasks_Every_Day(models.Model):
 class Tasks_Every_Weeks(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
     weeks = models.ForeignKey(Weeks, on_delete=models.CASCADE)
-    present = models.BooleanField(default=False)
+    present = models.NullBooleanField(default=False)
 
     def __str__(self):
         return str(self.student) + '  ' + str(self.weeks)

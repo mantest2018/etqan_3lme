@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from ..models import Students, Tasks_Every_Day, Plan, Days, Tasks_Every_Weeks, Tasks_Every_Months, Weeks, Months
-from .views import day_now, is_login
+from .views import day_now, is_login, is_administrator
 from ..form import Tasks_Every_Day_Form
 
 
@@ -74,30 +74,29 @@ def record(request, week_id=''):
         from ..models import Record
         from ..form import Record_Form
 
-        if  week_id == '':
-            weeks_id=week.id
+        if week_id == '':
+            weeks_id = week.id
         else:
             weeks_id = week_id
         try:
-            record = Record.objects.get(weeks_id=weeks_id,tracks=student.tracks)
+            record = Record.objects.get(weeks_id=weeks_id, tracks=student.tracks)
         except Record.DoesNotExist:
-            record = Record(weeks_id=weeks_id,tracks=student.tracks)
+            record = Record(weeks_id=weeks_id, tracks=student.tracks)
 
-        record_Form = Record_Form(request.POST or None,instance=record)
-        is_save=''
+        record_Form = Record_Form(request.POST or None, instance=record)
+        is_save = ''
 
         if "POST" == request.method:
             record_Form.save()
             is_save = 'تم حفظ البيانات'
-
 
         if week_id != '':
             week = Weeks.objects.get(pk=week_id)
             pathRoot = '.'
         latest_list = Tasks_Every_Weeks.objects.filter(weeks__id=week.id, student__tracks=student.tracks)
         context = {
-            'is_save':is_save,
-            'record_Form':record_Form,
+            'is_save': is_save,
+            'record_Form': record_Form,
             'latest_list': latest_list,
             'student': student,
             'week': week,
@@ -174,8 +173,19 @@ def present(request):
             if not student.is_admin:
                 return HttpResponseRedirect('/')
             id = request.POST.get('present_id', '')
-            item = Tasks_Every_Weeks.objects.get(id=id, student__tracks=student.tracks)
-            item.present = not item.present
+            if is_administrator(request):
+                item = Tasks_Every_Weeks.objects.get(id=id)
+            else:
+                item = Tasks_Every_Weeks.objects.get(id=id, student__tracks=student.tracks)
+            print(item.present)
+            if item.present== True:
+                item.present = None
+            elif item.present == None:
+                item.present = False
+            elif item.present == False:
+                item.present = True
+            else:
+                return HttpResponse("erorr")
             item.save()
             return HttpResponse(item.present)
         except(Students.DoesNotExist, Tasks_Every_Weeks.DoesNotExist):
@@ -196,7 +206,10 @@ def task(request):
             if not student.is_admin:
                 item = Tasks_Every_Day.objects.get(id=id, student__id=student.id)
             else:
-                item = Tasks_Every_Day.objects.get(id=id, student__tracks=student.tracks)
+                if is_administrator(request):
+                    item = Tasks_Every_Day.objects.get(id=id)
+                else:
+                    item = Tasks_Every_Day.objects.get(id=id, student__tracks=student.tracks)
             bo = 'erorr'
             for i in ['task1', 'task2', 'task3']:
                 if request.POST.get(i, '') != '':

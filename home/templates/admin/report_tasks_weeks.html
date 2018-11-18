@@ -95,7 +95,7 @@ padding: 4px;
     </div>
      {% endfor %}
     <style>
-.checkboxtrue ,.checkboxfalse{
+.checkboxtrue ,.checkboxfalse ,.checkboxnull{
     width: 20px;
     height: 20px;
     display: inline-block;
@@ -213,8 +213,10 @@ var xhttp = new XMLHttpRequest();
     if (this.readyState == 4 && this.status == 200) {
         if (this.responseText=="True"){
         self.className="checkboxtrue"
-        }else{
+        }else if(this.responseText=="False"){
         self.className="checkboxfalse"
+        }else{
+        self.className="checkboxnull"
         }
     }
   };
