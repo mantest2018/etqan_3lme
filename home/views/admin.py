@@ -159,7 +159,6 @@ def report_tasks_year(request):
             latest_list_old = tasks_every_month_objects().filter(student__tracks=student.tracks).order_by('months')
         latest_list_new={}
         total={}
-        n=1
         for item in latest_list_old:
             if total=={}:
                 total={
@@ -167,16 +166,17 @@ def report_tasks_year(request):
                     'total':item.total(),
                     'count_present':item.count_present(),
                     'test':item.test,
-                    'degree':round(item.degree(True),2),
+                    'degree':item.degree(True),
+                    'n':1
                 }
             else:
-                n=n+1
                 total = {
                     'total_all': total['total_all'] + item.total_all(),
                     'total': total['total'] + item.total(),
                     'count_present': total['count_present'] + item.count_present(),
                     'test': total['test'] + item.test,
-                    'degree': round((float(total['degree']) + float(item.degree(True))),2)
+                    'degree': total['degree'] + item.degree(True),
+                    'n': total['n']+1
                 }
             if not latest_list_new.get(item.months.name)  :
                 latest_list_new[item.months.name]={
@@ -184,7 +184,8 @@ def report_tasks_year(request):
                     'total':item.total(),
                     'count_present':item.count_present(),
                     'test':item.test,
-                    'degree':item.degree(True)
+                    'degree':item.degree(True),
+                    'n': 1
                 }
             else:
                 latest_list_new[item.months.name]={
@@ -192,11 +193,13 @@ def report_tasks_year(request):
                     'total':latest_list_new[item.months.name]['total']+item.total(),
                     'count_present':latest_list_new[item.months.name]['count_present']+item.count_present(),
                     'test':latest_list_new[item.months.name]['test']+item.test,
-                    'degree':(float(latest_list_new[item.months.name]['degree'])+float(item.degree(True)))/2
+                    'degree':latest_list_new[item.months.name]['degree']+item.degree(True),
+                    'n': latest_list_new[item.months.name]['n'] + 1,
                 }
         total['is_total']=True
-        total['degree']=total['degree']/n
-        latest_list_new['المجموع']=total
+        latest_list_new['المجموع'] = total
+        for item in latest_list_new:
+            latest_list_new[item]['degree']=latest_list_new[item]['degree']/latest_list_new[item]['n']
 
         context = {'latest_list': latest_list_new, 'student': student ,'path_admin': 'students/','administrator':administrator}
     except(Students.DoesNotExist):
