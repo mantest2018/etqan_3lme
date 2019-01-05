@@ -149,9 +149,35 @@ def report_tasks_year(request):
         from django.db.models import Sum
         student_id = request.session['member_id']
         student = Students.objects.get(pk=student_id)
-        latest_list_old = tasks_every_month_objects().filter(student__tracks=student.tracks).order_by('months')
+        if not student.is_admin:
+            return HttpResponseRedirect('/')
+        if request.path =='/administrator/report_tasks_year/':
+            administrator=True
+            latest_list_old = tasks_every_month_objects().order_by('months')
+        else:
+            administrator = False
+            latest_list_old = tasks_every_month_objects().filter(student__tracks=student.tracks).order_by('months')
         latest_list_new={}
+        total={}
+        n=1
         for item in latest_list_old:
+            if total=={}:
+                total={
+                    'total_all':item.total_all(),
+                    'total':item.total(),
+                    'count_present':item.count_present(),
+                    'test':item.test,
+                    'degree':round(item.degree(True),2),
+                }
+            else:
+                n=n+1
+                total = {
+                    'total_all': total['total_all'] + item.total_all(),
+                    'total': total['total'] + item.total(),
+                    'count_present': total['count_present'] + item.count_present(),
+                    'test': total['test'] + item.test,
+                    'degree': round((float(total['degree']) + float(item.degree(True))),2)
+                }
             if not latest_list_new.get(item.months.name)  :
                 latest_list_new[item.months.name]={
                     'total_all':item.total_all(),
@@ -168,8 +194,11 @@ def report_tasks_year(request):
                     'test':latest_list_new[item.months.name]['test']+item.test,
                     'degree':(float(latest_list_new[item.months.name]['degree'])+float(item.degree(True)))/2
                 }
+        total['is_total']=True
+        total['degree']=total['degree']/n
+        latest_list_new['المجموع']=total
 
-        context = {'latest_list': latest_list_new, 'student': student ,'path_admin': 'students/'}
+        context = {'latest_list': latest_list_new, 'student': student ,'path_admin': 'students/','administrator':administrator}
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'admin/report_tasks_year.html', context)

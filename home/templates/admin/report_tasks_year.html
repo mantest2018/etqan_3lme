@@ -3,10 +3,12 @@
 {% block content %}
 <h1 class="title">
     <tr>
-        <th scope="col">المشرف:</th>
-        <th scope="col">{{ student }}</th>
-        <th scope="col">مسار:</th>
+         {% if administrator %}
+        <th scope="col">تقرير البرنامج</th>
+         {% else %}
+                <th scope="col">تقرير مسار:</th>
         <th scope="col">{{ student.tracks }}</th>
+         {% endif %}
     </tr>
 </h1>
 
@@ -29,14 +31,22 @@
     </tr>
     </thead>
  {% for key, list in latest_list.items  %}
-    <tbody>
+
+        {% if list.is_total %}
+        <tbody class="total" style="background: lightgoldenrodyellow;">
+    <td colspan="2" > {{ key }}</td>
+    {% else %}
+        <tbody>
     <td> {{ forloop.counter }}</td>
     <td> {{ key }}</td>
+    {% endif %}
+
+
     <td> {{ list.total_all }}</td>
     <td> {{ list.total }}</td>
      <td> {{ list.count_present }}</td>
      <td> {{ list.test }}</td>
-     <td> {{ list.degree  }}</td>
+     <td> % {{ list.degree |floatformat:2 }}</td>
     {% if 'techer' in request.session.user_type%}
     <td><a href="/student/{{ list.reports_all_days.id }}/tasks/{{ list.student.id }}">تحرير</a></td>
     {% endif %}
