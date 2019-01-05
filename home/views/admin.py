@@ -139,6 +139,43 @@ def report_tasks_months(request, month_id=''):
     return render(request, 'admin/report_tasks_months.html', context)
 
 
+def report_tasks_year(request):
+    try:
+        if not is_login(request):
+            return HttpResponseRedirect('/')
+        if request.session['user_type'] != 'student':
+            return HttpResponseRedirect('/')
+        from .student import tasks_every_month_objects
+        from django.db.models import Sum
+        student_id = request.session['member_id']
+        student = Students.objects.get(pk=student_id)
+        latest_list_old = tasks_every_month_objects().filter(student__tracks=student.tracks).order_by('months')
+        latest_list_new={}
+        for item in latest_list_old:
+            if not latest_list_new.get(item.months.name)  :
+                latest_list_new[item.months.name]={
+                    'total_all':item.total_all(),
+                    'total':item.total(),
+                    'count_present':item.count_present(),
+                    'test':item.test,
+                    'degree':item.degree(True)
+                }
+            else:
+                latest_list_new[item.months.name]={
+                    'total_all':latest_list_new[item.months.name]['total_all']+item.total_all(),
+                    'total':latest_list_new[item.months.name]['total']+item.total(),
+                    'count_present':latest_list_new[item.months.name]['count_present']+item.count_present(),
+                    'test':latest_list_new[item.months.name]['test']+item.test,
+                    'degree':(float(latest_list_new[item.months.name]['degree'])+float(item.degree(True)))/2
+                }
+
+        context = {'latest_list': latest_list_new, 'student': student ,'path_admin': 'students/'}
+    except(Students.DoesNotExist):
+        raise Http404("Students does not exist")
+    return render(request, 'admin/report_tasks_year.html', context)
+
+
+
 def plan(request):
     try:
         if not is_login(request):

@@ -20,6 +20,8 @@ urlpatterns = [
     # student admin
     path('plan/', admin.plan, name='plan'),
     path('students/', admin.students, name='students'),
+    path('students/report_tasks_year/', admin.report_tasks_year, name='report_tasks_year'),
+
     # path('students/report_tasks_days/', admin.report_tasks_days, name='report_tasks_days'),
     path('students/report_tasks_weeks/', admin.report_tasks_weeks, name='report_tasks_weeks'),
     path('students/report_tasks_weeks/<int:week_id>/', admin.report_tasks_weeks, name='report_tasks_weeks'),

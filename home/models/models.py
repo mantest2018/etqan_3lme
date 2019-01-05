@@ -204,11 +204,13 @@ class Tasks_Every_Months(models.Model):
             count=Count('id'))[
             'count']
 
-    def degree(self):
+    def degree(self,pct=False):
         if self.total_all() == 0 or self.count_present_all() == 0:
             return 'يوجد نقص في الإدخال'
         degree = 50 * (self.total() / self.total_all()) + 20 * (
                     self.count_present() / self.count_present_all()) + self.test
+        if pct :
+            return degree
         return "%.2f%%" % degree
 
     def test_as(self):
