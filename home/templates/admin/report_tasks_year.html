@@ -21,16 +21,13 @@
         <th scope="col">الشهر</th>
         <th scope="col"> المهام الطلوبة</th>
         <th scope="col">المنفذ</th>
-        <th scope="col">الحضور</th>
+        <th scope="col">عدد الأيام</th>
+        <th scope="col">مجموع الحضور</th>
         <th scope="col">الإختبار</th>
         <th scope="col">الدرجة</th>
-        {% if 'techer' in request.session.user_type%}
-        <th scope="col">تحرير</th>
-        {% endif %}
-
     </tr>
     </thead>
- {% for key, list in latest_list.items  %}
+ {% for  list in latest_list  %}
 
         {% if list.is_total %}
         <tbody class="total" style="background: lightgoldenrodyellow;">
@@ -38,22 +35,35 @@
     {% else %}
         <tbody>
     <td> {{ forloop.counter }}</td>
-    <td> {{ key }}</td>
+    <td> {{ list.months__name }}</td>
     {% endif %}
-
-
     <td> {{ list.total_all }}</td>
     <td> {{ list.total }}</td>
+    <td> {{ list.count_present_all }}</td>
      <td> {{ list.count_present }}</td>
-     <td> {{ list.test }}</td>
+     <td> {{ list.test |floatformat:2  }}</td>
      <td> % {{ list.degree |floatformat:2 }}</td>
-    {% if 'techer' in request.session.user_type%}
-    <td><a href="/student/{{ list.reports_all_days.id }}/tasks/{{ list.student.id }}">تحرير</a></td>
-    {% endif %}
     </tbody>
     {% endfor %}
+
+            {% if total %}
+        <tbody class="total" style="background: lightgoldenrodyellow;">
+    <td colspan="2" > المجموع الكلي </td>
+    <td> {{ total.total_all__sum }}</td>
+    <td> {{ total.total__sum }}</td>
+    <td> {{ total.count_present_all__sum }} </td>
+     <td> {{ total.count_present__sum }}</td>
+     <td> {{ total.test__avg |floatformat:2 }}</td>
+     <td> % {{ total.degree__avg |floatformat:2 }}</td>
+    </tbody>
+    {% endif %}
+
 </table>
 {% else %}
 <p>لا يوجد بيانات </p>
 {% endif %}
+{% if administrator %}
+{% include "/administrator/report_tasks_year_tracks.html" %}
+{% endif %}
+
 {% endblock %}

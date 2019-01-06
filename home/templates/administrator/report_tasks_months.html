@@ -63,7 +63,7 @@ margin-bottom: 20px;
     <td> {{ list.total }}</td>
      <td> {{ list.count_present }}</td>
      <td> {{ list.test_as }}</td>
-     <td> {{ list.degree  }}</td>
+     <td> {{ list.degree |floatformat:2  }}</td>
     </tbody>
     {% endfor %}
 </table>

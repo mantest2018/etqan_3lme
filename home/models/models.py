@@ -87,15 +87,6 @@ class Students(models.Model):
     def __str__(self):
         return str(self.student)
 
-    #
-    # def get_permissions(self):
-    #     # import json
-    #     return eval(self.permissions)
-
-    # def set_permissions(self):
-    #     import json
-    #     return eval(self.permissions)
-
     def save(self, *args, **kwargs):
         super(Students, self).save(*args, **kwargs)
         for item in Days.objects.all():
@@ -104,20 +95,10 @@ class Students(models.Model):
 
 def updateData(Student, day):
     try:
-        Tasks_Every_Day.objects.get(student=Student, day=day)
+        report =Tasks_Every_Day.objects.get(student=Student, day=day)
     except Tasks_Every_Day.DoesNotExist:
         report = Tasks_Every_Day(student=Student, day=day)
-        report.save()
-    try:
-        Tasks_Every_Weeks.objects.get(student=Student, weeks=day.weeks)
-    except Tasks_Every_Weeks.DoesNotExist:
-        report = Tasks_Every_Weeks(student=Student, weeks=day.weeks)
-        report.save()
-    try:
-        Tasks_Every_Months.objects.get(student=Student, months=day.weeks.months)
-    except Tasks_Every_Months.DoesNotExist:
-        report = Tasks_Every_Months(student=Student, months=day.weeks.months)
-        report.save()
+    report.save()
 
 
 class Tasks_Every_Day(models.Model):
@@ -137,19 +118,24 @@ class Tasks_Every_Day(models.Model):
         if self.is_stop == "":
             self.is_stop = None
         for item in ['task1', 'task2', 'task3']:
-            # if self.is_stop:
-            #     self.__dict__[item] = False
-            #     continue
             if self.__dict__[item]:
                 total += 1
         self.degree = total
         super(Tasks_Every_Day, self).save(*args, **kwargs)
+        try:
+            report=Tasks_Every_Weeks.objects.get(student=self.student,weeks=self.day.weeks)
+        except Tasks_Every_Weeks.DoesNotExist:
+            report = Tasks_Every_Weeks(student=self.student,weeks=self.day.weeks)
+        report.save()
 
 
 class Tasks_Every_Weeks(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
     weeks = models.ForeignKey(Weeks, on_delete=models.CASCADE)
     present = models.NullBooleanField(default=False)
+    total_all = models.FloatField(default=0,null=True, blank=True)
+    total = models.FloatField(default=0,null=True, blank=True)
+
 
     def __str__(self):
         return str(self.student) + '  ' + str(self.weeks)
@@ -160,16 +146,25 @@ class Tasks_Every_Weeks(models.Model):
         else:
             return 'checkboxfalse'
 
-    def total_all(self):
-        return Tasks_Every_Day.objects.filter(student=self.student, day__weeks=self.weeks).exclude(is_stop=True).aggregate(count=Count('id'))[
+    def __setAll(self):
+        tasks_every_day=Tasks_Every_Day.objects.filter(student=self.student, day__weeks=self.weeks)
+        self.total_all = tasks_every_day.exclude(is_stop=True).aggregate(count=Count('id'))[
                    'count'] * 3
-
-    def total(self):
-        return Tasks_Every_Day.objects.filter(student=self.student, day__weeks=self.weeks).exclude(is_stop=True).aggregate(sum=Sum('degree'))[
+        self.total=tasks_every_day.exclude(is_stop=True).aggregate(sum=Sum('degree'))[
             'sum']
 
     def tasks_Day(self):
         return Tasks_Every_Day.objects.filter(student=self.student, day__weeks=self.weeks)
+
+
+    def save(self, *args, **kwargs):
+        self.__setAll()
+        super(Tasks_Every_Weeks, self).save(*args, **kwargs)
+        try:
+            report =Tasks_Every_Months.objects.get(student=self.student, months=self.weeks.months)
+        except Tasks_Every_Months.DoesNotExist:
+            report = Tasks_Every_Months(student=self.student, months=self.weeks.months)
+        report.save()
 
 
 class test_form(forms.Form):
@@ -180,38 +175,36 @@ class Tasks_Every_Months(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
     months = models.ForeignKey(Months, on_delete=models.CASCADE)
     test = models.FloatField(default=0)
+    total_all=models.FloatField(default=0)
+    total=models.FloatField(default=0)
+    count_present_all=models.FloatField(default=0)
+    count_present=models.FloatField(default=0)
+    degree=models.FloatField(default=None,null=True, blank=True)
 
     def __str__(self):
         return str(self.student) + '  ' + str(self.months)
 
-    def total_all(self):
-        return Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months).aggregate(
+    def __setAll(self):
+        self.tasks_every_day= Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months)
+        self.tasks_every_week=Tasks_Every_Weeks.objects.filter(student=self.student, weeks__months=self.months)
+        self.total_all= self.tasks_every_day.aggregate(
             count=Count('id'))[
                    'count'] * 3
-
-    def total(self):
-        return Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months).aggregate(
+        self.total = self.tasks_every_day.aggregate(
             sum=Sum('degree'))['sum']
-
-    def count_present_all(self):
-        return \
-        Tasks_Every_Weeks.objects.filter(student=self.student, weeks__months=self.months).aggregate(count=Count('id'))[
+        self.count_present_all = self.tasks_every_week.aggregate(count=Count('id'))[
             'count']
 
-    def count_present(self):
-        return \
-        Tasks_Every_Weeks.objects.filter(student=self.student, weeks__months=self.months, present='True').aggregate(
+        self.count_present = self.tasks_every_week.filter(present='True').aggregate(
             count=Count('id'))[
             'count']
 
-    def degree(self,pct=False):
-        if self.total_all() == 0 or self.count_present_all() == 0:
-            return 'يوجد نقص في الإدخال'
-        degree = 50 * (self.total() / self.total_all()) + 20 * (
-                    self.count_present() / self.count_present_all()) + self.test
-        if pct :
-            return degree
-        return "%.2f%%" % degree
+        if self.total_all == 0 or self.count_present_all == 0:
+            self.degree =None
+        else:
+            self.degree =  50 * (self.total / self.total_all) + 20 * (
+                    self.count_present / self.count_present_all) + self.test
+
 
     def test_as(self):
         try:
@@ -220,6 +213,11 @@ class Tasks_Every_Months(models.Model):
             return form['test']
         except:
             return 'يوجد مشكلة تواصل مع المسؤول عن الموقع'
+
+    def save(self, *args, **kwargs):
+        self.__setAll()
+        super(Tasks_Every_Months, self).save(*args, **kwargs)
+
 
 
 class Record(models.Model):
