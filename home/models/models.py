@@ -34,6 +34,7 @@ class Years(models.Model):
 class Months(models.Model):
     years = models.ForeignKey(Years, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+    test_is_stop = models.NullBooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
         return str(self.name) + '  ' + str(self.years)
@@ -180,7 +181,7 @@ class Tasks_Every_Months(models.Model):
     count_present_all=models.FloatField(default=0)
     count_present=models.FloatField(default=0)
     degree=models.FloatField(default=None,null=True, blank=True)
-    test_is_stop = models.NullBooleanField(default=False, null=True, blank=True)
+
 
     def __str__(self):
         return str(self.student) + '  ' + str(self.months)
@@ -203,7 +204,7 @@ class Tasks_Every_Months(models.Model):
         if self.total_all == 0 or self.count_present_all == 0:
             self.degree =None
         else:
-            if self.test_is_stop:
+            if self.months.test_is_stop:
                 self.degree =  70 * (self.total / self.total_all) + 30 * (
                     self.count_present / self.count_present_all)
             else:
