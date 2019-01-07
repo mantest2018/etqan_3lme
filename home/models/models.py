@@ -82,6 +82,7 @@ class Students(models.Model):
     password = models.CharField(max_length=8)
     is_show = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    settings = models.CharField(default='{}', max_length=350, null=True, blank=True)
 
     # permissions = models.CharField(max_length=250, null=True, blank=True)
 
