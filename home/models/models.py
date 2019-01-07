@@ -84,15 +84,47 @@ class Students(models.Model):
     is_admin = models.BooleanField(default=False)
     settings = models.CharField(default='{}', max_length=350, null=True, blank=True)
 
-    # permissions = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
         return str(self.student)
 
+    def set_date_remove(self, date_remove):
+        if self.settings == '{}':
+            self.full_settings()
+        import json
+        setting = json.loads(self.settings)
+        setting['date_remove'] = date_remove
+        self.settings = json.dumps(setting)
+        self.save()
+        pass
+
+    def get_date_remove(self):
+        if self.settings == '{}':
+            self.full_settings()
+        import json
+        setting = json.loads(self.settings).get('date_remove')
+        return setting
+
+
+    def full_settings(self):
+        import json
+        setting = {}
+        if self.settings == '{}':
+            setting['last_change'] = datetime.datetime.now().strftime("%Y-%m-%d %X")
+        else:
+            setting = json.loads(self.settings)
+            if not 'last_change' in setting:
+                setting['last_change'] = datetime.datetime.now().strftime("%Y-%m-%d %X")
+        self.settings = json.dumps(setting)
+        pass
+
     def save(self, *args, **kwargs):
+        self.full_settings()
         super(Students, self).save(*args, **kwargs)
         for item in Days.objects.all():
             updateData(self, item)
+
+
 
 
 def updateData(Student, day):
