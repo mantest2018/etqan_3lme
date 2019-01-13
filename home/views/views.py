@@ -83,10 +83,43 @@ def logout(request):
         del request.session['administrator']
     return HttpResponseRedirect('/')
 
-def update(request):
-    for item in Students.objects.all():
+import _thread
+
+is_update_now=False
+prossing=0
+
+def proces_update():
+    global is_update_now
+    global prossing
+    student=Students.objects.all()
+    prossing=0
+    n=0
+    count=student.count()
+    for item in student:
         item.save()
-    return HttpResponse("تم")
+        prossing=n/count
+        n = n + 1
+    is_update_now = False
+    pass
+
+
+def update(request):
+    global is_update_now
+    global prossing
+
+    if "POST" == request.method:
+        if is_update_now == False:
+            is_update_now = True
+            _thread.start_new_thread(proces_update, ())
+
+    context = {
+        'prossing': prossing,
+    }
+    return HttpResponse(request,'update.html',context)
+
+
+
+
 
 def donload_Plan(request):
     if not is_admin(request):
