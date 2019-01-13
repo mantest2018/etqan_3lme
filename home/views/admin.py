@@ -138,6 +138,19 @@ def report_tasks_months(request, month_id=''):
         raise Http404("Students does not exist")
     return render(request, 'admin/report_tasks_months.html', context)
 
+def bilding_report_tasks_year(latest_list):
+    from django.db.models import Sum, Avg
+    total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
+                                  Sum('count_present'), Avg('degree'))
+    latest_list_new = latest_list.values('months__name', 'months').annotate(test=Avg('test'),
+                                                                            total_all=Sum('total_all'),
+                                                                            total=Sum('total'),
+                                                                            count_present_all=Sum('count_present_all'),
+                                                                            count_present=Sum('count_present'),
+                                                                            degree=Avg('degree')).order_by('months')
+    latest_list_new = list(latest_list_new)
+    latest_list_new.append(total)
+    return latest_list_new
 
 def report_tasks_year(request):
     try:
@@ -146,7 +159,7 @@ def report_tasks_year(request):
         if request.session['user_type'] != 'student':
             return HttpResponseRedirect('/')
         from .student import tasks_every_month_objects
-        from django.db.models import Sum ,Avg
+
         student_id = request.session['member_id']
         student = Students.objects.get(pk=student_id)
         if not student.is_admin:
@@ -154,63 +167,20 @@ def report_tasks_year(request):
         if request.path =='/administrator/report_tasks_year/':
             administrator=True
             latest_list = tasks_every_month_objects()
-                # .order_by('months')
         else:
             administrator = False
             latest_list = tasks_every_month_objects().filter(student__tracks=student.tracks)
-        latest_list_new={}
-        total=latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),Sum('count_present'),Avg('degree'))
-        latest_list_new=latest_list.values('months__name','months').annotate(test = Avg('test'),total_all = Sum('total_all'),total = Sum('total'),count_present_all = Sum('count_present_all'),count_present = Sum('count_present'),degree = Avg('degree')).order_by('months')
-        # test =
-        # total_all =
-        # total =
-        # count_present_all =
-        # count_present =
-        # degree =
-        # for item in latest_list_old:
-        #     if total=={}:
-        #         total={
-        #             'total_all':item.total_all(),
-        #             'total':item.total(),
-        #             'count_present':item.count_present(),
-        #             'test':item.test,
-        #             'degree':item.degree(True),
-        #             'n':1
-        #         }
-        #     else:
-        #         total = {
-        #             'total_all': total['total_all'] + item.total_all(),
-        #             'total': total['total'] + item.total(),
-        #             'count_present': total['count_present'] + item.count_present(),
-        #             'test': total['test'] + item.test,
-        #             'degree': total['degree'] + item.degree(True),
-        #             'n': total['n']+1
-        #         }
-        #     if not latest_list_new.get(item.months.name)  :
-        #         latest_list_new[item.months.name]={
-        #             'total_all':item.total_all(),
-        #             'total':item.total(),
-        #             'count_present':item.count_present(),
-        #             'test':item.test,
-        #             'degree':item.degree(True),
-        #             'n': 1
-        #         }
-        #     else:
-        #         latest_list_new[item.months.name]={
-        #             'total_all':latest_list_new[item.months.name]['total_all']+item.total_all(),
-        #             'total':latest_list_new[item.months.name]['total']+item.total(),
-        #             'count_present':latest_list_new[item.months.name]['count_present']+item.count_present(),
-        #             'test':latest_list_new[item.months.name]['test']+item.test,
-        #             'degree':latest_list_new[item.months.name]['degree']+item.degree(True),
-        #             'n': latest_list_new[item.months.name]['n'] + 1,
-        #         }
-        # total['is_total']=True
-        # latest_list_new['المجموع'] = total
-        # for item in latest_list_new:
-        #     latest_list_new[item]['degree']=latest_list_new[item]['degree']/latest_list_new[item]['n']
-        print(total)
 
-        context = {'latest_list': latest_list_new,'total':total, 'student': student ,'path_admin': 'students/','administrator':administrator}
+        latest_list=bilding_report_tasks_year(latest_list)
+
+        tracks_all={}
+        if administrator:
+            from ..models import Tracks
+            for tracks in Tracks.objects.all():
+                tracks_all[str(tracks.name)] = bilding_report_tasks_year(tasks_every_month_objects().filter(student__tracks=tracks))
+
+
+        context = {'latest_list': latest_list,'student': student ,'path_admin': 'students/','administrator':administrator,'tracks_all':tracks_all}
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'admin/report_tasks_year.html', context)

@@ -27,8 +27,9 @@
         <th scope="col">الدرجة</th>
     </tr>
     </thead>
- {% for  list in latest_list  %}
+ {% for list in latest_list  %}
 
+      {% if not list.total__sum %}
         {% if list.is_total %}
         <tbody class="total" style="background: lightgoldenrodyellow;">
     <td colspan="2" > {{ key }}</td>
@@ -44,26 +45,26 @@
      <td> {{ list.test |floatformat:2  }}</td>
      <td> % {{ list.degree |floatformat:2 }}</td>
     </tbody>
-    {% endfor %}
-
-            {% if total %}
+    {% else %}
         <tbody class="total" style="background: lightgoldenrodyellow;">
     <td colspan="2" > المجموع الكلي </td>
-    <td> {{ total.total_all__sum }}</td>
-    <td> {{ total.total__sum }}</td>
-    <td> {{ total.count_present_all__sum }} </td>
-     <td> {{ total.count_present__sum }}</td>
-     <td> {{ total.test__avg |floatformat:2 }}</td>
-     <td> % {{ total.degree__avg |floatformat:2 }}</td>
+    <td> {{ list.total_all__sum }}</td>
+    <td> {{ list.total__sum }}</td>
+    <td> {{ list.count_present_all__sum }} </td>
+     <td> {{ list.count_present__sum }}</td>
+     <td> {{ list.test__avg |floatformat:2 }}</td>
+     <td> % {{ list.degree__avg |floatformat:2 }}</td>
     </tbody>
     {% endif %}
+
+    {% endfor %}
 
 </table>
 {% else %}
 <p>لا يوجد بيانات </p>
 {% endif %}
 {% if administrator %}
-{% include "/administrator/report_tasks_year_tracks.html" %}
+{% include "administrator/report_tasks_year_tracks.html" %}
 {% endif %}
 
 {% endblock %}
