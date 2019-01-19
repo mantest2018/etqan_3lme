@@ -99,9 +99,9 @@ def report_tasks_days(request, student_id=''):
         student = Students.objects.get(pk=student_id)
         if request.session['user_type'] == 'student':
             #  تم إضافة  True   مؤفته
-            latest_list = tasks_every_day_objects().filter(student=request.session['member_id']).order_by('day')
+            latest_list = tasks_every_day_objects(True).filter(student=request.session['member_id']).order_by('day')
         if request.session['user_type'] == 'techer':
-            latest_list = tasks_every_day_objects().filter(student=student_id,
+            latest_list = tasks_every_day_objects(True).filter(student=student_id,
                                                                student__tracks=request.session['member_id']).order_by(
                 'day')
 
