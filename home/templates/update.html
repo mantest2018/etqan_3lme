@@ -8,6 +8,8 @@
         <div class="col-md-4">
             <section class="login-form">
                 <form action="" method="post">{% csrf_token %}
+                    <progress value="{{prossing}}" max="100">
+</progress>
                     <div>{{prossing}}</div>
                     <button type="submit">إبداء التحديث</button>
                 </form>

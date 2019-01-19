@@ -40,7 +40,7 @@ margin-bottom: 20px;
 
 
 {% if latest_list %}
-<form action="{{ pathRoot }}./{{list.id}}" method="post" role="input">{% csrf_token %}
+<form action="./" method="post" role="input">{% csrf_token %}
 <table class="table">
     <thead>
     <tr>
@@ -50,6 +50,7 @@ margin-bottom: 20px;
         <th scope="col"> المهام الطلوبة</th>
         <th scope="col">المنفذ</th>
         <th scope="col">الحضور</th>
+        <th scope="col">متوقف عن الإختبار</th>
         <th scope="col">الإختبار</th>
         <th scope="col">الدرجة</th>
     </tr>
@@ -62,6 +63,7 @@ margin-bottom: 20px;
     <td> {{ list.total_all }}</td>
     <td> {{ list.total }}</td>
      <td> {{ list.count_present }}</td>
+     <td> {{ list.is_stop_as }}</td>
      <td> {{ list.test_as }}</td>
      <td> {{ list.degree |floatformat:2  }}</td>
     </tbody>

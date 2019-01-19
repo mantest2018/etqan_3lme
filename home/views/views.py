@@ -115,7 +115,7 @@ def update(request):
     context = {
         'prossing': prossing,
     }
-    return HttpResponse(request,'update.html',context)
+    return render(request,'update.html',context)
 
 
 

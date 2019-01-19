@@ -227,6 +227,9 @@ class Tasks_Every_Weeks(models.Model):
 class test_form(forms.Form):
     test = forms.FloatField(label='الإختبار', required=False, min_value=0, max_value=30)
 
+class is_stop_form(forms.Form):
+    is_stop = forms.BooleanField(label='متوقف', required=False)
+
 
 class Tasks_Every_Months(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
@@ -237,6 +240,7 @@ class Tasks_Every_Months(models.Model):
     count_present_all=models.FloatField(default=0)
     count_present=models.FloatField(default=0)
     degree=models.FloatField(default=None,null=True, blank=True)
+    is_stop = models.NullBooleanField(default=False, null=True, blank=True)
 
 
     def __str__(self):
@@ -260,7 +264,7 @@ class Tasks_Every_Months(models.Model):
         if self.total_all == 0 or self.count_present_all == 0:
             self.degree =None
         else:
-            if self.months.test_is_stop:
+            if self.months.test_is_stop or self.is_stop:
                 self.degree =  70 * (self.total / self.total_all) + 30 * (
                     self.count_present / self.count_present_all)
             else:
@@ -268,10 +272,18 @@ class Tasks_Every_Months(models.Model):
                     self.count_present / self.count_present_all) + self.test
 
 
+    def is_stop_as(self):
+        try:
+            form = is_stop_form(initial={'is_stop': self.is_stop})
+            form['is_stop'].html_name = "tast_month["+str(self.id)+"][is_stop]"
+            return form['is_stop']
+        except:
+            return 'يوجد مشكلة تواصل مع المسؤول عن الموقع'
+
     def test_as(self):
         try:
             form = test_form(initial={'test': self.test})
-            form['test'].html_name = str(self.id)
+            form['test'].html_name = "tast_month["+str(self.id)+"][test]"
             return form['test']
         except:
             return 'يوجد مشكلة تواصل مع المسؤول عن الموقع'
