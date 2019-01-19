@@ -78,10 +78,11 @@ class Students(models.Model):
     student = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=10, null=True, blank=True)
     choice_text = models.CharField(max_length=200, null=True, blank=True)
-    date_registr = models.DateTimeField(default=datetime.date(2018, 7, 1), null=True, blank=True)
+    date_registr = models.DateTimeField(default=datetime.datetime.now(), null=True, blank=True)
     number_user = models.IntegerField(default=0)
     password = models.CharField(max_length=8)
     is_show = models.BooleanField(default=True)
+    date_deleted = models.DateTimeField(default=None, null=True, blank=True)
     is_admin = models.BooleanField(default=False)
     settings = models.CharField(default='{}', max_length=350, null=True, blank=True)
 
@@ -93,6 +94,14 @@ class Students(models.Model):
         from library.umalqurra.hijri_date import HijriDate
         date_hijri = HijriDate( self.date_registr)
         return date_hijri.date_hijri()
+
+    def get_date_deleted(self):
+        from library.umalqurra.hijri_date import HijriDate
+        if self.date_deleted:
+            date_hijri = HijriDate(self.date_deleted)
+            return date_hijri.date_hijri()
+        else:
+            return "-------"
 
     def set_date_remove(self, date_remove):
         if self.settings == '{}':
@@ -127,8 +136,16 @@ class Students(models.Model):
     def save(self, *args, **kwargs):
         self.full_settings()
         super(Students, self).save(*args, **kwargs)
-        for item in Days.objects.all():
-            updateData(self, item)
+        if self.is_show == False and not self.date_deleted == None :
+            from django.db.models import Q
+            for item in Days.objects.filter(Q(start_time__gte=self.date_registr)  & Q(start_time__lt=self.date_deleted) ):
+                updateData(self, item)
+            Tasks_Every_Day.objects.filter(day__start_time__gte=self.date_deleted,task1=False,task2=False,task3=False).delete()
+        else:
+            Tasks_Every_Day.objects.filter(day__start_time__lt=self.date_registr, task1=False, task2=False,
+                                           task3=False,is_stop=None).delete()
+            for item in Days.objects.filter(start_time__gte=self.date_registr):
+                updateData(self, item)
 
 
 
