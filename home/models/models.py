@@ -78,6 +78,7 @@ class Students(models.Model):
     student = models.CharField(max_length=200)
     phone_number = models.CharField(max_length=10, null=True, blank=True)
     choice_text = models.CharField(max_length=200, null=True, blank=True)
+    date_registr = models.DateTimeField(default=datetime.date(2018, 7, 1), null=True, blank=True)
     number_user = models.IntegerField(default=0)
     password = models.CharField(max_length=8)
     is_show = models.BooleanField(default=True)
@@ -87,6 +88,11 @@ class Students(models.Model):
 
     def __str__(self):
         return str(self.student)
+
+    def get_date_registr(self):
+        from library.umalqurra.hijri_date import HijriDate
+        date_hijri = HijriDate( self.date_registr)
+        return date_hijri.date_hijri()
 
     def set_date_remove(self, date_remove):
         if self.settings == '{}':

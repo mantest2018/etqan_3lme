@@ -12,6 +12,8 @@
         <th scope="col">{{ report.day.name }}</th>
           <th scope="col">التاريخ:</th>
         <th scope="col">{{ report.day.date_hijri }}</th>
+                  <th scope="col">تاريخ التسجيل:</th>
+        <th scope="col">{{ report.student.get_date_registr }}</th>
         {% if report.student.is_show == False %}
         <th scope="col">نأسف تم حذف اسمك من الموقع تواصل مع المشرف :</th>
         {% endif %}
