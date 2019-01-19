@@ -8,10 +8,10 @@
         <div class="col-md-4">
             <section class="login-form">
                 <form action="" method="post">{% csrf_token %}
-                    <progress value="{{prossing}}" max="100">
+                    <progress id="prossing" value="{{prossing}}" max="100">
 </progress>
-                    <div>{{prossing}}</div>
-                    <button type="submit">إبداء التحديث</button>
+                    <div id="element" >{{prossing}}</div>
+                    <button type="button" onclick="send_to_task()">إبداء التحديث</button>
                 </form>
 
             </section>
@@ -19,4 +19,26 @@
         <div class="col-md-4"></div>
     </div>
 </div>
+ <script>
+
+var element=document.getElementById("element");
+var prossing=document.getElementById("prossing");
+function send_to_task() {
+var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        if (this.responseText!="100"){
+         prossing.value=this.responseText;
+         element.innerHTML=this.responseText;
+         send_to_task();
+        }
+    }
+  };
+  xhttp.open("POST", "/update/", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}");
+}
+
+
+   </script>
 {% endblock %}

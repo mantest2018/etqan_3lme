@@ -158,6 +158,7 @@ def updateData(Student, day):
     report.save()
 
 
+
 class Tasks_Every_Day(models.Model):
     student = models.ForeignKey(Students, on_delete=models.CASCADE)
     day = models.ForeignKey(Days, on_delete=models.CASCADE)
