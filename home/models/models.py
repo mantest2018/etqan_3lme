@@ -140,7 +140,7 @@ class Students(models.Model):
             from django.db.models import Q
             for item in Days.objects.filter(Q(start_time__gte=self.date_registr)  & Q(start_time__lt=self.date_deleted) ):
                 updateData(self, item)
-            Tasks_Every_Day.objects.filter(student=self,day__start_time__gte=self.date_deleted,task1=False,task2=False,task3=False).delete()
+            Tasks_Every_Day.objects.filter(student=self,day__start_time__gte=self.date_deleted,task1=False,task2=False,task3=False,is_stop=None).delete()
         else:
             Tasks_Every_Day.objects.filter(student=self,day__start_time__lt=self.date_registr, task1=False, task2=False,
                                            task3=False,is_stop=None).delete()
