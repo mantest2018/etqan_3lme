@@ -64,11 +64,14 @@ def tasks_every_day(request, day_id=day_now(), student_id=''):
         raise Http404("الصفحة المطلوبة غير موجودة")
     except(Tasks_Every_Day.DoesNotExist):
         Student = Students.objects.get(pk=student_id)
-        day = Days.objects.get(pk=day_id)
-        updateData(Student, day)
-        report = Tasks_Every_Day.objects.get(student=student_id, day__id=day_id)
-        fotmedit = Tasks_Every_Day_Form(instance=report)
-        context = {'fotmedit': fotmedit, 'report': report}
+        if Student.is_show == True:
+            day = Days.objects.get(pk=day_id)
+            updateData(Student, day)
+            report = Tasks_Every_Day.objects.get(student=student_id, day__id=day_id)
+            fotmedit = Tasks_Every_Day_Form(instance=report)
+            context = {'fotmedit': fotmedit, 'report': report}
+        else:
+            context = {'fotmedit': None, 'student': Student}
     return render(request, 'Student/Input_page.html', context)
 
 
