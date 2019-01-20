@@ -85,11 +85,11 @@ def logout(request):
 
 # import _thread
 
-is_update_now=False
-prossing=0
+# is_update_now=False
+# prossing=0
 student=None
 n=0
-count=1
+count=0
 def proces_update():
     global is_update_now
     global prossing
@@ -99,23 +99,32 @@ def proces_update():
     if student==None:
         student=Students.objects.all()
         count = student.count()
-    print(student[n])
     student[n].save()
-    prossing=(n/count)*100
+    # prossing=(n/count)*100
     n = n + 1
-    is_update_now = False
+    # is_update_now = False
     pass
 
 
 def update(request):
-    global is_update_now
-    global prossing
-    proces_update()
+    global count
+    global n
+    global student
+    if count == 0:
+        student=Students.objects.all()
+        count = student.count()
+
+
     if "POST" == request.method:
-        return HttpResponse(prossing)
+        print(count)
+        print(n)
+        if count == n+1:
+            return HttpResponse(True)
+        proces_update()
+        return HttpResponse(round(n, 2))
 
     context = {
-        'prossing': prossing,
+        'count': count,
     }
     return render(request,'update.html',context)
 
