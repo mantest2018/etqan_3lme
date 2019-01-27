@@ -48,10 +48,10 @@ class Record_Form(forms.ModelForm):
     day = forms.ModelChoiceField(label='اليوم',queryset=Days.objects.none(),required=False)
     other = forms.CharField(label='آخر', required=False, max_length=50)
     time = forms.CharField(label='الزمن', required=False,max_length=50)
-    working = forms.CharField(label='أعمال الجلسة', required=False, widget=forms.Textarea,max_length=250)
-    achievements =  forms.CharField(label='المنجزات', required=False, widget=forms.Textarea,max_length=250)
-    Costs = forms.CharField(label='التكاليف القادمة', required=False, widget=forms.Textarea,max_length=250)
-    recommendations = forms.CharField(label='التوصيات', required=False, widget=forms.Textarea,max_length=250)
+    working = forms.CharField(label='ملخص الجلسة', required=False, widget=forms.Textarea,max_length=250)
+    # achievements =  forms.CharField(label='المنجزات', required=False, widget=forms.Textarea,max_length=250)
+    # Costs = forms.CharField(label='التكاليف القادمة', required=False, widget=forms.Textarea,max_length=250)
+    # recommendations = forms.CharField(label='التوصيات', required=False, widget=forms.Textarea,max_length=250)
 
     def __init__(self,  *args, **kwargs):
 
@@ -60,6 +60,6 @@ class Record_Form(forms.ModelForm):
 
     class Meta:
         model = Record
-        exclude=['weeks','tracks']
+        exclude=['weeks','tracks','achievements','Costs','recommendations']
 
 

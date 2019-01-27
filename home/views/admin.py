@@ -139,10 +139,10 @@ def report_tasks_months(request, month_id=''):
     return render(request, 'admin/report_tasks_months.html', context)
 
 def bilding_report_tasks_year(latest_list):
-    from django.db.models import Sum, Avg
+    from django.db.models import Sum, Avg , Q
     total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
                                   Sum('count_present'), Avg('degree'))
-    latest_list_new = latest_list.values('months__name', 'months').annotate(test=Avg('test'),
+    latest_list_new = latest_list.values('months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False)),
                                                                             total_all=Sum('total_all'),
                                                                             total=Sum('total'),
                                                                             count_present_all=Sum('count_present_all'),
