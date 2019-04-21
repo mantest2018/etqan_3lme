@@ -143,7 +143,14 @@ class Students(models.Model):
             Tasks_Every_Day.objects.filter(student=self,day__start_time__gte=self.date_deleted,task1=False,task2=False,task3=False,is_stop=False).delete()
         else:
             Tasks_Every_Day.objects.filter(student=self,day__start_time__lt=self.date_registr, task1=False, task2=False,
-                                           task3=False,is_stop=None).delete()
+                                           task3=False).delete()
+
+            # Tasks_Every_Weeks.objects.filter(student=self,weeks__day__start_time__lt=self.date_registr, task1=False, task2=False,
+            #                                task3=False).delete()
+
+            # Tasks_Every_Months months
+
+
             for item in Days.objects.filter(start_time__gte=self.date_registr):
                 updateData(self, item)
 
@@ -204,8 +211,8 @@ class Tasks_Every_Weeks(models.Model):
         else:
             return 'checkboxfalse'
 
-    def __setAll(self):
-        tasks_every_day=Tasks_Every_Day.objects.filter(student=self.student, day__weeks=self.weeks)
+    def __setAll(self,tasks_every_day):
+
         self.total_all = tasks_every_day.exclude(is_stop=True).aggregate(count=Count('id'))[
                    'count'] * 3
         self.total=tasks_every_day.exclude(is_stop=True).aggregate(sum=Sum('degree'))[
@@ -216,13 +223,17 @@ class Tasks_Every_Weeks(models.Model):
 
 
     def save(self, *args, **kwargs):
-        self.__setAll()
-        super(Tasks_Every_Weeks, self).save(*args, **kwargs)
-        try:
-            report =Tasks_Every_Months.objects.get(student=self.student, months=self.weeks.months)
-        except Tasks_Every_Months.DoesNotExist:
-            report = Tasks_Every_Months(student=self.student, months=self.weeks.months)
-        report.save()
+        tasks_every_day = Tasks_Every_Day.objects.filter(student=self.student, day__weeks=self.weeks)
+        if tasks_every_day:
+            self.__setAll(tasks_every_day)
+            super(Tasks_Every_Weeks, self).save(*args, **kwargs)
+            try:
+                report =Tasks_Every_Months.objects.get(student=self.student, months=self.weeks.months)
+            except Tasks_Every_Months.DoesNotExist:
+                report = Tasks_Every_Months(student=self.student, months=self.weeks.months)
+            report.save()
+        else:
+            self.delete()
 
 
 class test_form(forms.Form):
@@ -247,20 +258,28 @@ class Tasks_Every_Months(models.Model):
     def __str__(self):
         return str(self.student) + '  ' + str(self.months)
 
-    def __setAll(self):
-        self.tasks_every_day= Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months)
+    def __setAll(self,tasks_every_day):
+        # self.tasks_every_day= Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months)
         self.tasks_every_week=Tasks_Every_Weeks.objects.filter(student=self.student, weeks__months=self.months)
-        self.total_all= self.tasks_every_day.aggregate(
-            count=Count('id'))[
-                   'count'] * 3
-        self.total = self.tasks_every_day.aggregate(
-            sum=Sum('degree'))['sum']
-        self.count_present_all = self.tasks_every_week.aggregate(count=Count('id'))[
-            'count']
+        if tasks_every_day:
+            self.total_all= tasks_every_day.aggregate(
+                count=Count('id'))[
+                       'count'] * 3
+            self.total = tasks_every_day.aggregate(
+                sum=Sum('degree'))['sum']
+        else:
+            self.total_all=0
+            self.total =0
+        if self.tasks_every_week:
+            self.count_present_all = self.tasks_every_week.aggregate(count=Count('id'))[
+                'count']
 
-        self.count_present = self.tasks_every_week.filter(present='True').aggregate(
-            count=Count('id'))[
-            'count']
+            self.count_present = self.tasks_every_week.filter(present='True').aggregate(
+                count=Count('id'))[
+                'count']
+        else:
+            self.count_present_all =0
+            self.count_present =0
 
         if self.total_all == 0 or self.count_present_all == 0:
             self.degree =None
@@ -290,8 +309,14 @@ class Tasks_Every_Months(models.Model):
             return 'يوجد مشكلة تواصل مع المسؤول عن الموقع'
 
     def save(self, *args, **kwargs):
-        self.__setAll()
+        # self.__setAll()
         super(Tasks_Every_Months, self).save(*args, **kwargs)
+        tasks_every_day = Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months)
+        if tasks_every_day:
+            self.__setAll(tasks_every_day)
+            super(Tasks_Every_Months, self).save(*args, **kwargs)
+        else:
+            self.delete()
 
 
 

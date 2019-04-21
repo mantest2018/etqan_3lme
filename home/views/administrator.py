@@ -26,7 +26,7 @@ def report_tasks_months(request, month_id=''):
             pos=request.POST
             from library.mylib import parse_multi_form
             for key, value in parse_multi_form(pos)['tast_month'].items():
-                try:
+                # try:
                     task = Tasks_Every_Months.objects.get(id=key)
                     task.test = float(value['test'])
                     if value.get('is_stop')== 'on':
@@ -34,8 +34,8 @@ def report_tasks_months(request, month_id=''):
                     else:
                         task.is_stop = False
                     task.save()
-                except:
-                    print("erorr")
+                # except:
+                #     print("erorr")
 
         context = {
             'latest_list': latest_list,
