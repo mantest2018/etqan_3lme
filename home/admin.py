@@ -69,9 +69,17 @@ class Students_Admin(admin.ModelAdmin):
     class Meta:
         model = Students
 
+class Tasks_Every_Day_Admin(admin.ModelAdmin):
+    list_display = ['student','day', 'day__start_time', 'day__weeks','day__weeks__months']
+    search_fields = ('student__student',)
+    list_filter = ('student','day__weeks', 'day__weeks','day__weeks__months')
+
+    class Meta:
+        model = Tasks_Every_Day
+
 
 admin.site.register(Students, Students_Admin)
-admin.site.register(Tasks_Every_Day)
+admin.site.register(Tasks_Every_Day,Tasks_Every_Day_Admin)
 admin.site.register(Tasks_Every_Weeks)
 admin.site.register(Tasks_Every_Months)
 admin.site.register(Record)
