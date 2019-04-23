@@ -6,10 +6,17 @@
 
 <br/>
 
+<div>
+    <input type="button" value="طباعة" onclick="PrintElem(this)" />
 
 <h1 class="title">
     <tr>
-        <th scope="col">تقرير مسار:</th>
+                    {% if students %}
+                  <th scope="col">تقرير:</th>
+            {% else %}
+                  <th scope="col">تقرير مسار:</th>
+            {% endif %}
+
         <th scope="col">{{ key }}</th>
     </tr>
 </h1>
@@ -58,9 +65,39 @@
     {% endif %}
 
     {% endfor %}
-
 </table>
+    </div>
 {% endfor %}
+
+   <script type="text/javascript">
+        function PrintElem(self) {
+            Popup(self.parentElement.innerHTML);
+        }
+
+        function Popup(data) {
+            var myWindow = window.open('', 'my div', 'height=400,width=600');
+            myWindow.document.write('<html dir="rtl"><head><title>my div</title>');
+
+            /*optional stylesheet*/ //myWindow.document.write('<link rel="stylesheet" href="main.css" type="text/css" />');
+             {% load static %}
+
+            myWindow.document.write('<link rel="stylesheet" href="{% static 'style/bootstrap/css/bootstrap.css' %}">');
+            myWindow.document.write('<link rel="stylesheet" href="{% static 'style/css/style-v1.0.0.css' %}">');
+            myWindow.document.write('<style media="print"> body {background-color:#FFFFFF;}  input {display: none;} </style>');
+
+            myWindow.document.write('</head><body >');
+            myWindow.document.write(data);
+            myWindow.document.write('</body></html>');
+            myWindow.document.close(); // necessary for IE >= 10
+
+            myWindow.onload=function(){ // necessary if the div contain images
+
+                myWindow.focus(); // necessary for IE >= 10
+                myWindow.print();
+                myWindow.close();
+            };
+        }
+    </script>
 
 {% else %}
 <p>لا يوجد بيانات </p>

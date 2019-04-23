@@ -4,7 +4,11 @@
 <h1 class="title">
     <tr>
          {% if administrator %}
-        <th scope="col">تقرير البرنامج</th>
+            {% if students %}
+                <th scope="col">تقرير مفصل للأعضاء</th>
+            {% else %}
+                <th scope="col">تقرير البرنامج</th>
+            {% endif %}
          {% else %}
                 <th scope="col">تقرير مسار:</th>
         <th scope="col">{{ student.tracks }}</th>

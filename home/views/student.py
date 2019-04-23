@@ -145,6 +145,7 @@ def tasks_every_month_objects():
     month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months.id
     return Tasks_Every_Months.objects.filter(months__id__lte=month)
 
+# tasks_every_month_objects_students
 
 def report_tasks_months(request, student_id=''):
     try:

@@ -42,6 +42,7 @@ urlpatterns = [
     path('administrator/report_tasks_months/<int:month_id>/', administrator.report_tasks_months, name='report_tasks_months'),
 
     path('administrator/report_tasks_year/', admin.report_tasks_year, name='report_tasks_year'),
+    path('administrator/report_tasks_year/students/', admin.report_tasks_year, name='report_tasks_year'),
 
     path('present/', admin.present, name='present'),
     path('task/', admin.task, name='task'),

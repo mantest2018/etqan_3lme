@@ -164,7 +164,7 @@ def report_tasks_year(request):
         student = Students.objects.get(pk=student_id)
         if not student.is_admin:
             return HttpResponseRedirect('/')
-        if request.path =='/administrator/report_tasks_year/':
+        if request.path in ['/administrator/report_tasks_year/','/administrator/report_tasks_year/students/']:
             administrator=True
             latest_list = tasks_every_month_objects()
         else:
@@ -173,14 +173,23 @@ def report_tasks_year(request):
 
         latest_list=bilding_report_tasks_year(latest_list)
 
+        students=False
+
         tracks_all={}
         if administrator:
-            from ..models import Tracks
-            for tracks in Tracks.objects.all():
-                tracks_all[str(tracks.name)] = bilding_report_tasks_year(tasks_every_month_objects().filter(student__tracks=tracks))
+            if request.path == '/administrator/report_tasks_year/students/':
+                students = True
+                from ..models import Tracks
+                for student in Students.objects.filter(is_show=True):
+                    tracks_all[str(student.student)] = bilding_report_tasks_year(
+                        tasks_every_month_objects().filter(student=student))
+            else:
+                from ..models import Tracks
+                for tracks in Tracks.objects.all():
+                    tracks_all[str(tracks.name)] = bilding_report_tasks_year(tasks_every_month_objects().filter(student__tracks=tracks))
 
 
-        context = {'latest_list': latest_list,'student': student ,'path_admin': 'students/','administrator':administrator,'tracks_all':tracks_all}
+        context = {'latest_list': latest_list,'students':students,'student': student ,'path_admin': 'students/','administrator':administrator,'tracks_all':tracks_all}
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'admin/report_tasks_year.html', context)
