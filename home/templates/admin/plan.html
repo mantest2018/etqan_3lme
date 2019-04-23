@@ -30,6 +30,7 @@
         <th>#</th>
         <th scope="col">اليوم</th>
          <th scope="col">التاريخ</th>
+        <th scope="col">الميلادي</th>
          <th scope="col">الشهر</th>
         <th scope="col">المهمة 1</th>
          <th scope="col">المهمة 2</th>
@@ -41,6 +42,7 @@
     <td> {{ forloop.counter }}</td>
     <td> {{ list.day.name }}</td>
      <td> {{ list.day.date_hijri }}</td>
+    <td> {{ list.day.start_time }}</td>
     <td> {{ list.day.weeks.months.name  }}</td>
     <td> {{ list.intent.task1 }}</td>
     <td> {{ list.intent.task2 }}</td>
