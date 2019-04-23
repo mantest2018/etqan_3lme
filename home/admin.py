@@ -71,7 +71,7 @@ class Students_Admin(admin.ModelAdmin):
 
 @admin.register(Tasks_Every_Day)
 class Tasks_Every_Day_Admin(admin.ModelAdmin):
-    list_display = ['student','day', 'day__start_time', 'day__weeks','day__weeks__months']
+    list_display = ['student','day']
     search_fields = ('student__student',)
     list_filter = ('student', 'day__weeks','day__weeks__months')
 
