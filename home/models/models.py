@@ -145,14 +145,21 @@ class Students(models.Model):
             Tasks_Every_Day.objects.filter(student=self,day__start_time__lt=self.date_registr, task1=False, task2=False,
                                            task3=False).delete()
 
-            # Tasks_Every_Weeks.objects.filter(student=self,weeks__day__start_time__lt=self.date_registr, task1=False, task2=False,
-            #                                task3=False).delete()
-
-            # Tasks_Every_Months months
-
 
             for item in Days.objects.filter(start_time__gte=self.date_registr):
                 updateData(self, item)
+
+        for tasks in Tasks_Every_Weeks.objects.filter(student=self):
+            if Tasks_Every_Day.objects.filter(student=self, day__weeks=tasks.weeks).count() == 0:
+                tasks.delete()
+            else:
+                tasks.save()
+
+        for tasks in Tasks_Every_Months.objects.filter(student=self):
+            if Tasks_Every_Weeks.objects.filter(student=self, weeks__months=tasks.months).count() == 0:
+                tasks.delete()
+            else:
+                tasks.save()
 
 
 
