@@ -13,11 +13,17 @@
     <tr>
                     {% if students %}
                   <th scope="col">تقرير:</th>
+             <th scope="col">{{ key }}</th>
+                          <th scope="col">    مسار:</th>
+             <th scope="col">{{ latest_list.0.student__tracks__name }}</th>
+
             {% else %}
                   <th scope="col">تقرير مسار:</th>
+             <th scope="col">{{ key }}</th>
             {% endif %}
 
-        <th scope="col">{{ key }}</th>
+
+
     </tr>
 </h1>
 <table class="table">

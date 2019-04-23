@@ -152,6 +152,20 @@ def bilding_report_tasks_year(latest_list):
     latest_list_new.append(total)
     return latest_list_new
 
+def bilding_report_tasks_year_student(latest_list):
+    from django.db.models import Sum, Avg , Q
+    total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
+                                  Sum('count_present'), Avg('degree'))
+    latest_list_new = latest_list.values('student__tracks__name','months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False)),
+                                                                            total_all=Sum('total_all'),
+                                                                            total=Sum('total'),
+                                                                            count_present_all=Sum('count_present_all'),
+                                                                            count_present=Sum('count_present'),
+                                                                            degree=Avg('degree')).order_by('months')
+    latest_list_new = list(latest_list_new)
+    latest_list_new.append(total)
+    return latest_list_new
+
 def report_tasks_year(request):
     try:
         if not is_login(request):
@@ -180,8 +194,8 @@ def report_tasks_year(request):
             if request.path == '/administrator/report_tasks_year/students/':
                 students = True
                 from ..models import Tracks
-                for student in Students.objects.filter(is_show=True):
-                    tracks_all[str(student.student)] = bilding_report_tasks_year(
+                for student in Students.objects.all():
+                    tracks_all[str(student.student)] = bilding_report_tasks_year_student(
                         tasks_every_month_objects().filter(student=student))
             else:
                 from ..models import Tracks
