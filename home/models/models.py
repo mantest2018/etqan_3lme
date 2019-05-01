@@ -267,6 +267,9 @@ class Tasks_Every_Months(models.Model):
 
     def __setAll(self,tasks_every_day):
         # self.tasks_every_day= Tasks_Every_Day.objects.filter(student=self.student, day__weeks__months=self.months)
+        tasks_every_day=tasks_every_day.exclude(is_stop=True)
+
+
         self.tasks_every_week=Tasks_Every_Weeks.objects.filter(student=self.student, weeks__months=self.months)
         if tasks_every_day:
             self.total_all= tasks_every_day.aggregate(
