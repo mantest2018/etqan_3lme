@@ -156,7 +156,7 @@ def bilding_report_tasks_year_student(latest_list):
     from django.db.models import Sum, Avg , Q
     total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
                                   Sum('count_present'), Avg('degree'))
-    latest_list_new = latest_list.values('student__tracks__name','months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False)),
+    latest_list_new = latest_list.values('student__student','student__tracks__name','months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False)),
                                                                             total_all=Sum('total_all'),
                                                                             total=Sum('total'),
                                                                             count_present_all=Sum('count_present_all'),
