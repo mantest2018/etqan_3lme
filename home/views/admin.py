@@ -195,7 +195,7 @@ def report_tasks_year(request):
                 students = True
                 from ..models import Tracks
                 for student in Students.objects.all():
-                    tracks_all[str(student.student)] = bilding_report_tasks_year_student(
+                    tracks_all[str(student.id)] = bilding_report_tasks_year_student(
                         tasks_every_month_objects().filter(student=student))
             else:
                 from ..models import Tracks
