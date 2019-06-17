@@ -283,7 +283,8 @@ class Tasks_Every_Months(models.Model):
             self.total_all=0
             self.total =0
         if self.tasks_every_week:
-            self.count_present_all = self.tasks_every_week.aggregate(count=Count('id'))[
+            from django.db.models import  Q, CharField
+            self.count_present_all = self.tasks_every_week.exclude(present=None).aggregate(count=Count('id'))[
                 'count']
 
             self.count_present = self.tasks_every_week.filter(present='True').aggregate(
@@ -294,7 +295,13 @@ class Tasks_Every_Months(models.Model):
             self.count_present =0
 
         if self.total_all == 0 or self.count_present_all == 0:
-            self.degree =None
+            if self.count_present_all == 0 :
+                if self.months.test_is_stop or self.is_stop:
+                    self.degree = 100 * (self.total / self.total_all)
+                else:
+                    self.degree = 70 * (self.total / self.total_all) + self.test
+            else:
+                self.degree =None
         else:
             if self.months.test_is_stop or self.is_stop:
                 self.degree =  70 * (self.total / self.total_all) + 30 * (
