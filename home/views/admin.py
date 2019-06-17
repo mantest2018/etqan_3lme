@@ -142,7 +142,8 @@ def bilding_report_tasks_year(latest_list):
     from django.db.models import Sum, Avg , Q, CharField
     total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
                                   Sum('count_present'), Avg('degree'))
-    print(total)
+    # print(total)
+
     # total1 = latest_list.annotate(test__avg=Avg('test'), total_all__sum=Sum('total_all'), total__sum= Sum('total'),count_present_all__sum= Sum('count_present_all'),
     #                               count_present__sum=Sum('count_present'), degree__avg=Avg('degree'))
     # print(list(total1))

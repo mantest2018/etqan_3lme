@@ -116,8 +116,8 @@ def update(request):
 
 
     if "POST" == request.method:
-        print(count)
-        print(n)
+        # print(count)
+        # print(n)
         if count == n+1:
             return HttpResponse(True)
         proces_update()
