@@ -137,12 +137,16 @@ def report_tasks_months(request, month_id=''):
     except(Students.DoesNotExist):
         raise Http404("Students does not exist")
     return render(request, 'admin/report_tasks_months.html', context)
-
+# تقرير سنوي حسب الحلقة
 def bilding_report_tasks_year(latest_list):
-    from django.db.models import Sum, Avg , Q
+    from django.db.models import Sum, Avg , Q, CharField
     total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
                                   Sum('count_present'), Avg('degree'))
-    latest_list_new = latest_list.values('months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False)),
+    print(total)
+    # total1 = latest_list.annotate(test__avg=Avg('test'), total_all__sum=Sum('total_all'), total__sum= Sum('total'),count_present_all__sum= Sum('count_present_all'),
+    #                               count_present__sum=Sum('count_present'), degree__avg=Avg('degree'))
+    # print(list(total1))
+    latest_list_new = latest_list.values('months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False),output_field=CharField()),
                                                                             total_all=Sum('total_all'),
                                                                             total=Sum('total'),
                                                                             count_present_all=Sum('count_present_all'),
@@ -153,10 +157,10 @@ def bilding_report_tasks_year(latest_list):
     return latest_list_new
 
 def bilding_report_tasks_year_student(latest_list):
-    from django.db.models import Sum, Avg , Q
+    from django.db.models import Sum, Avg , Q,CharField
     total = latest_list.aggregate(Avg('test'), Sum('total_all'), Sum('total'), Sum('count_present_all'),
                                   Sum('count_present'), Avg('degree'))
-    latest_list_new = latest_list.values('student__student','student__tracks__name','months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False)),
+    latest_list_new = latest_list.values('student__student','student__tracks__name','months__name', 'months').annotate(test=Avg('test', filter=Q(is_stop=False),output_field=CharField()),
                                                                             total_all=Sum('total_all'),
                                                                             total=Sum('total'),
                                                                             count_present_all=Sum('count_present_all'),
@@ -248,7 +252,7 @@ def present(request):
                 item = Tasks_Every_Weeks.objects.get(id=id)
             else:
                 item = Tasks_Every_Weeks.objects.get(id=id, student__tracks=student.tracks)
-            print(item.present)
+
             if item.present== True:
                 item.present = None
             elif item.present == None:
@@ -282,8 +286,14 @@ def task(request):
                 else:
                     item = Tasks_Every_Day.objects.get(id=id, student__tracks=student.tracks)
             bo = 'erorr'
-            for i in ['task1', 'task2', 'task3']:
+            for i in ['is_stop','task1', 'task2', 'task3']:
                 if request.POST.get(i, '') != '':
+                    if i =="is_stop":
+                        count_stoping = Tasks_Every_Day.objects.filter(student=student.id, is_stop=True).count()
+                        if count_stoping > 20:
+                            if is_administrator(request)==False:
+                                raise Http404('لا يمكن حفظ البيانات تم تجاوز عدد المرات المسموح بها في الاستئذان تواصل مع المشرف')
+
                     item.__dict__[i] = not item.__dict__[i]
                     item.save()
                     bo = item.__dict__[i]

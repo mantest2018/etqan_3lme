@@ -80,6 +80,16 @@ padding: 4px;
                                  {% for item in list.tasks_Day %}
                                 <tr name="{{ item.id }}" >
                                     <td> {{item.day.name}}</td>
+                                            <td>
+                              <img  value="{{item.is_stop}}" onclick="send_to_task(this)" name='is_stop' class={% if item.is_stop == False %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %} style="color: #007bff;cursor: pointer;"  class="icons down"
+       {% load static %}
+            {% if item.is_stop  %}
+                     src="{% static 'style/icon/exclamation-circle-solid.svg' %}">
+            {% else %}
+                src="{% static 'style/icon/check-circle-solid.svg' %}">
+            {% endif %}
+            </div></td>
                                       <td>
                         <div value="{{item.task1}}" onclick="send_to_task(this)" name='task1'  class={% if item.task1 %}
                         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
@@ -223,7 +233,6 @@ function send_to(self) {
 var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-        //alert(this.responseText);
         if (this.responseText=="True"){
         self.className="checkboxtrue"
         }else if(this.responseText=="False"){
@@ -244,11 +253,21 @@ var task_id = self.parentElement.parentElement.attributes["name"].value
 var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
+        if(self.attributes["name"].value=="is_stop"){
+            if (this.responseText!="True"){
+             self.className="checkboxtrue"
+               self.src="{% static 'style/icon/check-circle-solid.svg' %}";
+            }else{
+             self.className="checkboxfalse"
+                        self.src="{% static 'style/icon/exclamation-circle-solid.svg' %}";
+
+            }
+        }else{
         if (this.responseText=="True"){
         self.className="checkboxtrue"
         }else{
         self.className="checkboxfalse"
-        }
+        }}
     }
   };
   xhttp.open("POST", "/task/", true);

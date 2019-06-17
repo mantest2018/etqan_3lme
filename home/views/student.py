@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from ..models import Students, Tasks_Every_Day, Plan, Days, Tasks_Every_Weeks, Tasks_Every_Months
-from .views import day_now, is_login
+from .views import day_now, is_login,is_administrator
 from ..form import Tasks_Every_Day_Form
 
 
@@ -49,8 +49,13 @@ def tasks_every_day(request, day_id=day_now(), student_id=''):
         if "POST" == request.method:
             if bool(request.POST.get('is_stop',False)) == True:
                 count_stoping = Tasks_Every_Day.objects.filter(student=student_id, is_stop=True).count()
+
                 if count_stoping > 20:
-                    is_save = 'لا يمكن حفظ البيانات تم تجاوز عدد المرات المسموح بها في الاستئذان'
+                    if is_administrator(request):
+                        fotmedit.save()
+                        is_save = 'تم حفظ البيانات تم تجاوز العدد المسموح به في الإستئذان بعدد ' + str(count_stoping-20)
+                    else:
+                        is_save = 'لا يمكن حفظ البيانات تم تجاوز عدد المرات المسموح بها في الاستئذان'
                 else:
                     fotmedit.save()
                     is_save = 'تم حفظ البيانات عدد الأيام المتبقية للاستئذان' + str(count_stoping)
@@ -143,7 +148,7 @@ def report_tasks_weeks(request, student_id=''):
 
 def tasks_every_month_objects():
     month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months.id
-    return Tasks_Every_Months.objects.filter(months__id__lte=month)
+    return Tasks_Every_Months.objects.filter(months__id__lte=month).exclude(total_all=0)
 
 # tasks_every_month_objects_students
 

@@ -215,6 +215,8 @@ class Tasks_Every_Weeks(models.Model):
     def chpresent(self):
         if self.present:
             return 'checkboxtrue'
+        if self.present == None:
+            return "checkboxnull"
         else:
             return 'checkboxfalse'
 

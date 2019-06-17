@@ -31,8 +31,16 @@
     <td> {{ forloop.counter }}</td>
     <td> {{ list.day.date_hijri }}</td>
     <td> {{ list.day.name }}</td>
-        <td> {% if list.is_stop %}
-        متوقف{% else %}---{% endif %}</td>
+        <td>
+                              <img  value="{{list.is_stop}}" onclick="send_to_task(this)" name='is_stop' class={% if list.is_stop == False %}
+        "checkboxtrue"{% else %}"checkboxfalse"{% endif %} style="color: #007bff;cursor: pointer;"  class="icons down"
+       {% load static %}
+            {% if list.is_stop  %}
+                     src="{% static 'style/icon/exclamation-circle-solid.svg' %}">
+            {% else %}
+                src="{% static 'style/icon/check-circle-solid.svg' %}">
+            {% endif %}
+            </div></td>
     <td>
         <div value="{{list.task1}}" onclick="send_to_task(this)" name='task1' class={% if list.task1 %}
         "checkboxtrue"{% else %}"checkboxfalse"{% endif %}></div>
@@ -58,17 +66,29 @@ var task_id = self.parentElement.parentElement.attributes["name"].value
 var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
+        if(self.attributes["name"].value=="is_stop"){
+            if (this.responseText!="True"){
+             self.className="checkboxtrue"
+               self.src="{% static 'style/icon/check-circle-solid.svg' %}";
+            }else{
+             self.className="checkboxfalse"
+                        self.src="{% static 'style/icon/exclamation-circle-solid.svg' %}";
+
+            }
+        }else{
         if (this.responseText=="True"){
         self.className="checkboxtrue"
         }else{
         self.className="checkboxfalse"
-        }
+        }}
     }
   };
   xhttp.open("POST", "/task/", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xhttp.send("csrfmiddlewaretoken={{ csrf_token }}"+"&task_id="+task_id+"&"+self.attributes["name"].value+"="+self.attributes["value"].value);
 }
+
+
 
 
    </script>
