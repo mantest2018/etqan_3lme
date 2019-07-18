@@ -13,6 +13,10 @@ class Tracks(models.Model):
     def __str__(self):
         return str(self.name)
 
+    class Meta:
+        verbose_name = "المسار"
+        verbose_name_plural = "المسارات"
+
 
 class Intent(models.Model):
     name = models.CharField(max_length=200)
@@ -23,6 +27,9 @@ class Intent(models.Model):
     def __str__(self):
         return str(self.name)
 
+    class Meta:
+        verbose_name = "الهدف"
+        verbose_name_plural = "الأهداف"
 
 class Years(models.Model):
     name = models.CharField(max_length=50)
@@ -30,14 +37,35 @@ class Years(models.Model):
     def __str__(self):
         return str(self.name)
 
+    class Meta:
+        verbose_name = "السنة"
+        verbose_name_plural = "السنوات"
+
+
+class Semester(models.Model):
+    year=models.ForeignKey(Years, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+
+
+    def __str__(self):
+        return str(self.name)
+
+    class Meta:
+        verbose_name = "الفصل"
+        verbose_name_plural = "الفصول"
+
 
 class Months(models.Model):
-    years = models.ForeignKey(Years, on_delete=models.CASCADE)
+    semeste = models.ForeignKey(Semester, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     test_is_stop = models.NullBooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
-        return str(self.name) + '  ' + str(self.years)
+        return str(self.name) + '  ' + str(self.semeste)
+
+    class Meta:
+        verbose_name = "الشهر"
+        verbose_name_plural = "الشهور"
 
 
 class Weeks(models.Model):
@@ -46,6 +74,10 @@ class Weeks(models.Model):
 
     def __str__(self):
         return str(self.name) + '  ' + str(self.months)
+
+    class Meta:
+        verbose_name = "الأسبوع"
+        verbose_name_plural = "الأسابيع"
 
 
 class Days(models.Model):
@@ -62,6 +94,10 @@ class Days(models.Model):
         um = HijriDate(self.start_time)
         return um.date_hijri()
 
+    class Meta:
+        verbose_name = "اليوم"
+        verbose_name_plural = "الأيام"
+
 
 class Plan(models.Model):
     tracks = models.ForeignKey(Tracks, on_delete=models.CASCADE)
@@ -71,6 +107,10 @@ class Plan(models.Model):
 
     def __str__(self):
         return str(self.day) + '  ' + str(self.tracks) + '  ' + str(self.intent) + '  ' + str(self.amount)
+
+    class Meta:
+        verbose_name = "الخطة"
+        verbose_name_plural = "الخطط"
 
 
 class Students(models.Model):
@@ -161,6 +201,10 @@ class Students(models.Model):
             else:
                 tasks.save()
 
+    class Meta:
+        verbose_name = "الطالب"
+        verbose_name_plural = "الطلاب"
+
 
 
 
@@ -199,6 +243,10 @@ class Tasks_Every_Day(models.Model):
         except Tasks_Every_Weeks.DoesNotExist:
             report = Tasks_Every_Weeks(student=self.student,weeks=self.day.weeks)
         report.save()
+
+    class Meta:
+        verbose_name = "مهمة اليوم"
+        verbose_name_plural = "المهام اليومية"
 
 
 class Tasks_Every_Weeks(models.Model):
@@ -243,6 +291,10 @@ class Tasks_Every_Weeks(models.Model):
             report.save()
         else:
             self.delete()
+
+    class Meta:
+        verbose_name = "مهمة الأسبوع"
+        verbose_name_plural = "المهام الأسبوعية"
 
 
 class test_form(forms.Form):
@@ -337,6 +389,10 @@ class Tasks_Every_Months(models.Model):
         else:
             self.delete()
 
+    class Meta:
+        verbose_name = "مهمة الشهر"
+        verbose_name_plural = "المهام الشهرية"
+
 
 
 class Record(models.Model):
@@ -349,3 +405,7 @@ class Record(models.Model):
     achievements = models.CharField(max_length=250, null=True, blank=True)
     Costs = models.CharField(max_length=250, null=True, blank=True)
     recommendations = models.CharField(max_length=250, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "محضر"
+        verbose_name_plural = "المحاضر"

@@ -18,10 +18,16 @@
 
 
 {% if weeks %}
-<div>الأسبوع</div>
+<div>الشهر</div>
 <div class="portfolio-items">
+        {% for list in months %}
+    <a href="?months={{list.id}}" class="item">{{list}}</a>
+    {% endfor %}
+    </div>
+<div>الأسبوع</div>
+    <div class="portfolio-items">
     {% for list in weeks %}
-    <a href="{{ pathRoot }}./{{list.id}}" class="item">{{list}}</a>
+    <a href="?week={{list.id}}" class="item">{{list}}</a>
     {% endfor %}
 </div>
 

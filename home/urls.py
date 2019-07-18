@@ -34,7 +34,7 @@ urlpatterns = [
     # administrator
 
     path('administrator/report_tasks_weeks/', administrator.report_tasks_weeks, name='report_tasks_weeks'),
-    path('administrator/report_tasks_weeks/<int:week_id>/', administrator.report_tasks_weeks, name='report_tasks_weeks'),
+    # path('administrator/report_tasks_weeks/<int:week_id>/', administrator.report_tasks_weeks, name='report_tasks_weeks'),
 
     path('administrator/record/<int:week_id>/<int:tracks_id>/', administrator.record, name='record'),
 

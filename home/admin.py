@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Tracks, Intent, Years, Months, Weeks, Days, Plan, Students, Tasks_Every_Day, Tasks_Every_Weeks, \
-    Tasks_Every_Months, Record
+from .models import Tracks, Intent, Semester, Months, Weeks, Days, Plan, Students, Tasks_Every_Day, Tasks_Every_Weeks, \
+    Tasks_Every_Months, Record,Years
 
 
 # Register your models here.
@@ -18,12 +18,17 @@ class Intent_Admin(admin.ModelAdmin):
     class Meta:
         model = Intent
 
-
 class Years_Admin(admin.ModelAdmin):
     list_display = ['__str__']
 
     class Meta:
         model = Years
+
+class Semester_Admin(admin.ModelAdmin):
+    list_display = ['__str__']
+
+    class Meta:
+        model = Semester
 
 
 class Months_Admin(admin.ModelAdmin):
@@ -57,6 +62,7 @@ class Plan_Admin(admin.ModelAdmin):
 admin.site.register(Tracks, Tracks_Admin)
 admin.site.register(Intent, Intent_Admin)
 admin.site.register(Years, Years_Admin)
+admin.site.register(Semester, Semester_Admin)
 admin.site.register(Months, Months_Admin)
 admin.site.register(Weeks, Weeks_Admin)
 admin.site.register(Days, Days_Admin)

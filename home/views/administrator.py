@@ -50,7 +50,7 @@ def report_tasks_months(request, month_id=''):
     return render(request, 'administrator/report_tasks_months.html', context)
 
 
-def report_tasks_weeks(request, week_id=''):
+def report_tasks_weeks(request):
     try:
         if not is_login(request):
             return HttpResponseRedirect('/')
@@ -61,11 +61,16 @@ def report_tasks_weeks(request, week_id=''):
         if not student.is_admin:
             return HttpResponseRedirect('/')
         week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
-        weeks = Weeks.objects.filter(id__lte=week.id)
-        pathRoot = ''
-        if week_id != '':
-            week = Weeks.objects.get(pk=week_id)
-            pathRoot = '.'
+
+        months=week.months.semeste.months_set.all()
+
+        if request.GET.get("months", None):
+            weeks = Weeks.objects.filter(months__id=request.GET.get("months", None))
+        else:
+            weeks = Weeks.objects.filter(id__lte=week.id)
+
+        if request.GET.get("week", None):
+            week = Weeks.objects.get(pk=request.GET.get("week", None))
 
         latest_list = []
         i = 0
@@ -77,8 +82,8 @@ def report_tasks_weeks(request, week_id=''):
             'latest_list': latest_list,
             'student': student,
             'week': week,
+            'months':months,
             'weeks': weeks,
-            'pathRoot': pathRoot,
             'path_admin': 'students/',
         }
     except(Students.DoesNotExist):
