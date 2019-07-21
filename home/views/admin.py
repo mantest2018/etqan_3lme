@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from ..models import Students, Tasks_Every_Day, Plan, Days, Tasks_Every_Weeks, Tasks_Every_Months, Weeks, Months
-from .views import day_now, is_login, is_administrator
+from .views import day_now, is_login, is_administrator,day_now_object
 from ..form import Tasks_Every_Day_Form
 
 
@@ -225,6 +225,7 @@ def plan(request):
         student = Students.objects.get(pk=student_id)
         if not student.is_admin:
             return HttpResponseRedirect('/')
+        # latest_list = Plan.objects.filter(tracks=student.tracks,day__weeks__months__semeste=day_now_object().weeks.months.semeste)
 
         latest_list = Plan.objects.filter(tracks=student.tracks)
         context = {

@@ -64,7 +64,7 @@ class Months(models.Model):
         return str(self.name) + '  ' + str(self.semeste)
 
     class Meta:
-        verbose_name = "الشهر"
+        verbose_name = "الفترة"
         verbose_name_plural = "الشهور"
 
 
@@ -390,8 +390,8 @@ class Tasks_Every_Months(models.Model):
             self.delete()
 
     class Meta:
-        verbose_name = "مهمة الشهر"
-        verbose_name_plural = "المهام الشهرية"
+        verbose_name = "مهمة الفترة"
+        verbose_name_plural = "المهام الفترةية"
 
 
 

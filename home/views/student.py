@@ -2,7 +2,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 
 from ..models import Students, Tasks_Every_Day, Plan, Days, Tasks_Every_Weeks, Tasks_Every_Months
-from .views import day_now, is_login,is_administrator
+from .views import day_now, is_login,is_administrator,day_now_object
 from ..form import Tasks_Every_Day_Form
 
 
@@ -85,7 +85,7 @@ def tasks_every_day_objects(showAllDay=False):
         week = Days.objects.filter(id__lte=day_now()).latest('id').weeks
         return Tasks_Every_Day.objects.filter(day__id__lte=day_now(), day__weeks=week)
     else:
-        return Tasks_Every_Day.objects.filter(day__id__lte=day_now())
+        return Tasks_Every_Day.objects.filter(day__id__lte=day_now(),day__weeks__months__semeste=day_now_object().weeks.months.semeste)
 
 
 def report_tasks_days(request, student_id=''):
@@ -121,7 +121,7 @@ def report_tasks_days(request, student_id=''):
 
 def tasks_every_week_objects():
     week = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks
-    return Tasks_Every_Weeks.objects.filter(weeks__id__lte=week.id)
+    return Tasks_Every_Weeks.objects.filter(weeks__id__lte=week.id,weeks__months__semeste=week.months.semeste)
 
 
 def report_tasks_weeks(request, student_id=''):
@@ -147,8 +147,8 @@ def report_tasks_weeks(request, student_id=''):
 
 
 def tasks_every_month_objects():
-    month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months.id
-    return Tasks_Every_Months.objects.filter(months__id__lte=month).exclude(total_all=0)
+    month = Tasks_Every_Day.objects.filter(day__id__lte=day_now()).latest('id').day.weeks.months
+    return Tasks_Every_Months.objects.filter(months__id__lte=month.id,months__semeste=month.semeste).exclude(total_all=0)
 
 # tasks_every_month_objects_students
 

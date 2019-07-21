@@ -2,50 +2,30 @@
 
 {% block login %}
 <div class="container">
-    <div class="row" id="pwd-container">
-        <div class="col-md-4"></div>
+          <h1 >الموقع في حالة تحديث لبيانات الطلاب أنتظر حتى إنتهاء التحديث:</h1>
 
-        <div class="col-md-4">
-            <section class="login-form">
-                <form action="" method="post">{% csrf_token %}
-                    <progress id="prossing" value="0" max="{{count}}">
-</progress>
-                    <h1>
+<h1>
                                 <th scope="col">عدد الطلاب:</th>
         <th scope="col">{{ count }}</th>
-        <h1 >تم تحديث الطالب:</h1>
-        <th scope="col">  <div id="element" >----</div></th>
-                    </h1>
-                    <!--<button type="button" onclick="send_to_task()">إبداء التحديث</button>-->
-                </form>
 
-            </section>
-        </div>
+        <div >تم تحديث الطالب:</div>
+                <th scope="col">{{ n }}</th></h1>
         <div class="col-md-4"></div>
+                                    <progress id="prossing" value="0" max="{{count}}">
+</progress>
     </div>
-</div>
  <script>
-document.onload=send_to_task()
-var element=document.getElementById("element");
-var prossing=document.getElementById("prossing");
-function send_to_task() {
-var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        if (this.responseText!="True"){
-         prossing.value=this.responseText;
-         element.innerHTML=this.responseText;
-         send_to_task();
-        }else{
-        element.innerHTML="تم التحديث";
-        }
-    }
-  };
-  xhttp.open("POST", "/update/", true);
-  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  xhttp.send("csrfmiddlewaretoken={{ csrf_token }}");
-}
+ document.onload=progress_value()
 
+function progress_value() {
+    var prossing=document.getElementById("prossing");
+    var count={{ count }};
+    var n = {{ n }};
+    if (count != 0){
+        prossing.value=(n).toString();
+
+    }
+}
 
    </script>
 {% endblock %}

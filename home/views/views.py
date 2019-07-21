@@ -7,10 +7,12 @@ from django.db.models import Q
 
 # Create your views here.
 
+def day_now_object():
+    t = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+    return Days.objects.filter(Q(start_time__lte=t) | Q(id=1)).latest('id')
 
 def day_now():
-    t = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
-    return Days.objects.filter(Q(start_time__lte=t) | Q(id=1)).latest('id').id
+    return day_now_object().id
 
 
 def index(request):
@@ -87,46 +89,46 @@ def logout(request):
 
 # is_update_now=False
 # prossing=0
-student=None
-n=0
-count=0
-def proces_update():
-    global is_update_now
-    global prossing
-    global student
-    global n
-    global count
-    if student==None:
-        student=Students.objects.all()
-        count = student.count()
-    student[n].save()
-    # prossing=(n/count)*100
-    n = n + 1
-    # is_update_now = False
-    pass
 
-
-def update(request):
-    global count
-    global n
-    global student
-    if count == 0:
-        student=Students.objects.all()
-        count = student.count()
-
-
-    if "POST" == request.method:
-        # print(count)
-        # print(n)
-        if count == n+1:
-            return HttpResponse(True)
-        proces_update()
-        return HttpResponse(round(n, 2))
-
-    context = {
-        'count': count,
-    }
-    return render(request,'update.html',context)
+#----------------------------
+# student=None
+# n=0
+# count=0
+# def proces_update():
+#     global is_update_now
+#     global prossing
+#     global student
+#     global n
+#     global count
+#     if student==None:
+#         student=Students.objects.all()
+#         count = student.count()
+#     student[n].save()
+#     # prossing=(n/count)*100
+#     n = n + 1
+#     # is_update_now = False
+#     pass
+#
+#
+# def update(request):
+#     global count
+#     global n
+#     global student
+#     if count == 0:
+#         student=Students.objects.all()
+#         count = student.count()
+#
+#
+#     if "POST" == request.method:
+#         if count == n+1:
+#             return HttpResponse(True)
+#         proces_update()
+#         return HttpResponse(round(n, 2))
+#
+#     context = {
+#         'count': count,
+#     }
+#     return render(request,'update.html',context)
 
 
 

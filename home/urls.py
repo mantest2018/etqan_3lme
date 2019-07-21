@@ -1,12 +1,13 @@
 from django.urls import path, re_path
 from .views import views,student,admin,administrator
+from .middleware_update import update
 
 urlpatterns = [
     # home
     re_path(r'^$', views.index, name='index'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
-    path('update/', views.update, name='update'),
+    path('update/', update, name='update'),
 
     # student
     path('report_tasks_days/', student.report_tasks_days, name='report_tasks_days'),
