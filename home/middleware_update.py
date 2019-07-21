@@ -18,9 +18,13 @@ def proces_update():
     count = students.count()
     n = 0
     is_update_now=True
+    print("start update")
     for student in students:
+        print(student)
         student.save()
         n = n + 1
+    print("fish update")
+
     count =0
     n = 0
     is_update_now=False
