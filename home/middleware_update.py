@@ -5,7 +5,7 @@ from home.models import Students
 
 
 import _thread
-
+import time
 is_update_now=False
 count=0
 n = 0
@@ -19,6 +19,10 @@ def proces_update():
     n = 0
     is_update_now=True
     print("start update")
+    for i in range(10):
+        print(i)
+        time.sleep(1)
+
     for student in students:
         print(student)
         student.save()
